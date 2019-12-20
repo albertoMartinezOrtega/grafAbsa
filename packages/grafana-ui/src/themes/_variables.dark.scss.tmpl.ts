@@ -184,7 +184,7 @@ $btn-inverse-text-shadow: 0px 1px 0 rgba(0, 0, 0, 0.1);
 
 $btn-link-color: $gray-3;
 
-$iconContainerBackground: $white;
+$iconContainerBackground: $black;
 
 $btn-divider-left: $dark-9;
 $btn-divider-right: $dark-3;
@@ -255,7 +255,7 @@ $navbar-button-border: #2f2f32;
 // -------------------------
 $side-menu-bg: $knesysBlue;
 $side-menu-bg-mobile: $side-menu-bg;
-$side-menu-item-hover-bg: $dark-3;
+$side-menu-item-hover-bg: $knesysGray;
 $side-menu-shadow: 0 0 20px black;
 $side-menu-link-color: $link-color;
 
