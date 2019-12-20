@@ -2,9 +2,6 @@
 
 This guide helps you get started developing Grafana.
 
-Before you begin, you might want to read [How to contribute to Grafana as a junior dev](https://medium.com/@ivanahuckova/how-to-contribute-to-grafana-as-junior-dev-c01fe3064502) by [Ivana Huckova](https://medium.com/@ivanahuckova).
-
-
 ## Dependencies
 
 Make sure you have the following dependencies installed before setting up your developer environment:
