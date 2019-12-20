@@ -150,6 +150,11 @@ export interface GrafanaTheme extends GrafanaThemeCommons {
     gray10: string;
     gray05: string;
 
+    // Knesys color scheme
+    knesysBlue: string;
+    knesysGreen: string;
+    knesysGray: string;
+
     // New blues palette used by next-gen form elements
     blue95: string;
     blue85: string;

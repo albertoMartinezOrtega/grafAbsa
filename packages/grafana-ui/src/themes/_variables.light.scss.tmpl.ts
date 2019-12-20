@@ -22,10 +22,15 @@ $green-base: ${theme.colors.greenBase};
 $green-shade: ${theme.colors.greenShade};
 $orange-dark: ${theme.colors.orangeDark};
 
+// Knesys Colors
+// -------------------------
+$knesysBlue: ${theme.colors.knesysBlue};
+$knesysGreen: ${theme.colors.knesysGreen};
+$knesysGray: ${theme.colors.knesysGray};
+
 // Grays
 // -------------------------
 $black: ${theme.colors.black};
-
 $dark-1: ${theme.colors.dark1};
 $dark-2: ${theme.colors.dark2};
 $dark-4: ${theme.colors.dark4};
@@ -240,7 +245,7 @@ $navbar-button-border: $gray-4;
 
 // Sidemenu
 // -------------------------
-$side-menu-bg: $dark-1;
+$side-menu-bg: $knesysBlue;
 $side-menu-bg-mobile: rgba(0, 0, 0, 0); //$gray-6;
 $side-menu-item-hover-bg: $gray-1;
 $side-menu-shadow: 5px 0px 10px -5px $gray-1;

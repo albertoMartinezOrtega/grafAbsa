@@ -22,6 +22,12 @@ $green-base: ${theme.colors.greenBase};
 $green-shade: ${theme.colors.greenShade};
 $orange-dark: ${theme.colors.orangeDark};
 
+// Knesys Colors
+// -------------------------
+$knesysBlue: ${theme.colors.knesysBlue};
+$knesysGreen: ${theme.colors.knesysGreen};
+$knesysGray: ${theme.colors.knesysGray};
+
 // Grays
 // -------------------------
 $black: ${theme.colors.black};
@@ -178,7 +184,7 @@ $btn-inverse-text-shadow: 0px 1px 0 rgba(0, 0, 0, 0.1);
 
 $btn-link-color: $gray-3;
 
-$iconContainerBackground: $black;
+$iconContainerBackground: $white;
 
 $btn-divider-left: $dark-9;
 $btn-divider-right: $dark-3;
@@ -247,7 +253,7 @@ $navbar-button-border: #2f2f32;
 
 // Sidemenu
 // -------------------------
-$side-menu-bg: $black;
+$side-menu-bg: $knesysBlue;
 $side-menu-bg-mobile: $side-menu-bg;
 $side-menu-item-hover-bg: $dark-3;
 $side-menu-shadow: 0 0 20px black;

@@ -15,6 +15,9 @@ const basicColors = {
   dark8: '#2f2f32', // not used in light theme
   dark9: '#343436', // not used in light theme
   dark10: '#424345', // not used in light theme
+  knesysBlue: '#00a0ff',
+  knesysGreen: '#a0f032',
+  knesysGray: '#c1c1c1',
   gray1: '#52545c',
   gray2: '#767980',
   gray3: '#acb6bf',
