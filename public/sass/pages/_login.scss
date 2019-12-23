@@ -21,6 +21,15 @@ $login-border: #8daac5;
   & .btn-primary {
     @include buttonBackground(#ff6600, #bc3e06);
   }
+  & .btn-knesys-login {
+    @include buttonBackground(#a0f032, #8ac932);
+    border-radius: 20px;
+  }
+
+  & .btn-knesys-login-disabled {
+    @include buttonBackground(#c1c1c1, $btn-inverse-bg-hl, $btn-inverse-text-color, $btn-inverse-text-shadow);
+    border-radius: 20px;
+  }
 }
 
 input:-webkit-autofill,
@@ -52,11 +61,11 @@ select:-webkit-autofill:focus {
 }
 
 .login-form-input {
-  border: 1px solid $login-border;
-  border-radius: 4px;
-  opacity: 0.6;
-  background: $black;
-  color: #fbfbfb;
+  // border: 1px solid $login-border;
+  // border-radius: 4px;
+  height: 30px;
+  // opacity: 0.6;
+  // color: #fbfbfb;
 
   &:focus {
     border: 1px solid $login-border;
