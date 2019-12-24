@@ -27,7 +27,7 @@ $login-border: #8daac5;
   }
 
   & .btn-knesys-login-disabled {
-    @include buttonBackground(#c1c1c1, $btn-inverse-bg-hl, $btn-inverse-text-color, $btn-inverse-text-shadow);
+    @include buttonBackground(#c1c1c1, #c1c1c1, $btn-inverse-text-color, $btn-inverse-text-shadow);
     border-radius: 20px;
   }
 }

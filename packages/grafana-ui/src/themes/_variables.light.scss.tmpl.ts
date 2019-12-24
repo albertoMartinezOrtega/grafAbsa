@@ -86,8 +86,8 @@ $text-color-emphasis: ${theme.colors.textEmphasis};
 $text-shadow-faint: none;
 
 // gradients
-$brand-gradient-horizontal: linear-gradient(to right, #f05a28 30%, #fbca0a 99%);
-$brand-gradient-vertical: linear-gradient(#f05a28 30%, #fbca0a 99%);
+$brand-gradient-horizontal: linear-gradient(to right, #a0f032 30%, #a0f032 99%);
+$brand-gradient-vertical: linear-gradient(#a0f032 30%, #a0f032 99%);
 $page-gradient: linear-gradient(180deg, $white 10px, $gray-7 100px);
 $edit-gradient: linear-gradient(-60deg, $gray-7, #f5f6f9 70%, $gray-7 98%);
 
@@ -114,7 +114,7 @@ $panel-header-hover-bg: $gray-6;
 $panel-corner: $gray-4;
 
 // Page header
-$page-header-bg: linear-gradient(90deg, $white, $gray-7);
+$page-header-bg: linear-gradient(90deg, $white, #f7f7f7);
 $page-header-shadow: inset 0px -3px 10px $gray-6;
 $page-header-border-color: $gray-4;
 
