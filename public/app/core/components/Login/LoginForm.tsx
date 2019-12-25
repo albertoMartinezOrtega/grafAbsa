@@ -117,6 +117,7 @@ export class LoginForm extends PureComponent<Props, State> {
             onChange={this.onChangeUsername}
           />
         </FormControl>
+        <div></div>
         {/* <div className="login-form">
           <input
             type="password"
@@ -131,9 +132,9 @@ export class LoginForm extends PureComponent<Props, State> {
           />
         </div> */}
         <FormControl className="login-form">
-          <InputLabel htmlFor="standard-adornment-password">Password</InputLabel>
+          <InputLabel /*htmlFor="standard-adornment-password"*/>Password</InputLabel>
           <Input
-            id="standard-adornment-password"
+            // id="standard-adornment-password"
             type={this.state.showPassword ? 'text' : 'password'}
             value={this.state.password}
             className="login-form-input"
@@ -191,7 +192,6 @@ export class LoginForm extends PureComponent<Props, State> {
               variant="contained"
               size="large"
               color="primary"
-              // knesys green: #a0f032
               className="btn btn-large p-x-2 btn-knesys-login-disabled btn-loading"
               onClick={this.onSubmit}
               disabled={!this.state.valid}
@@ -201,13 +201,12 @@ export class LoginForm extends PureComponent<Props, State> {
               <span>.</span>
             </Button>
           )}
-
-          {this.props.displayForgotPassword ? (
-            <div className="small login-button-forgot-password">
-              <a href="user/password/send-reset-email">Forgot your password?</a>
-            </div>
-          ) : null}
         </div>
+        {this.props.displayForgotPassword ? (
+          <div className="small login-button-forgot-password">
+            <a href="user/password/send-reset-email">Forgot your password?</a>
+          </div>
+        ) : null}
       </form>
     );
   }

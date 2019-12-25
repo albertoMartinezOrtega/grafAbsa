@@ -4,6 +4,8 @@ import appEvents from 'app/core/app_events';
 import { NavModel, NavModelItem, NavModelBreadcrumb } from '@grafana/data';
 import { CoreEvents } from 'app/types';
 
+import Tab from '@material-ui/core/Tab';
+
 export interface Props {
   model: NavModel;
 }
@@ -59,12 +61,19 @@ const Tabs = ({ main, customCss }: { main: NavModelItem; customCss: string }) =>
         });
 
         return (
-          <li className="gf-tabs-item" key={tab.url}>
-            <a className={tabClasses} target={tab.target} href={tab.url}>
-              <i className={tab.icon} />
+          <span>
+            <li className="gf-tabs-item">
+              <a target={tab.target} href={tab.url}>
+                <Tab className={tabClasses} icon={<i className={tab.icon} />} label={tab.text} />
+              </a>
+            </li>
+            {/* <li className="gf-tabs-item" key={tab.url}>
+              <a className={tabClasses} target={tab.target} href={tab.url}>
+                <i className={tab.icon} />
               {tab.text}
-            </a>
-          </li>
+              </a>
+            </li> */}
+          </span>
         );
       })}
     </ul>
