@@ -289,6 +289,12 @@ export function setupAngularRoutes($routeProvider: route.IRouteProvider, $locati
           SafeDynamicImport(import(/* webpackChunkName: "AdminSettings" */ 'app/features/admin/AdminSettings')),
       },
     })
+    .when('/admin/network-settings', {
+      template: '<react-container />',
+      resolve: {
+        component: () => SafeDynamicImport(import('app/features/admin/AdminNetwork')),
+      },
+    })
     .when('/admin/users', {
       templateUrl: 'public/app/features/admin/partials/users.html',
       controller: 'AdminListUsersCtrl',

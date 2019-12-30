@@ -66,10 +66,28 @@ select:-webkit-autofill:focus {
   color: #000;
 }
 
+.login-color {
+  color: $knesysGreen;
+  background-color: $knesysGray;
+
+  &:focused {
+    color: #a0f032;
+  }
+  &:active {
+    color: #ff6600;
+  }
+  &:after {
+    border-bottom-color: #a0f032;
+    border-bottom-width: 2px;
+    border-bottom-style: solid;
+  }
+}
+
 .login-form-input {
   // border: 1px solid $login-border;
   // border-radius: 4px;
   height: 30px;
+  width: 300px;
   // opacity: 0.6;
   color: #000;
 

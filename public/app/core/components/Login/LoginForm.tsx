@@ -4,13 +4,36 @@ import { e2e } from '@grafana/e2e';
 // import clsx from 'clsx';
 // import { makeStyles} from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
+// import Input from '@material-ui/core/Input';
+// import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import FormControl from '@material-ui/core/FormControl';
-// import TextField from '@material-ui/core/TextField';
+import TextField from '@material-ui/core/TextField';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
+
+import { withStyles } from '@material-ui/core/styles';
+const CssTextField = withStyles({
+  root: {
+    '& label.Mui-focused': {
+      color: 'black',
+    },
+    '& .MuiInput-underline:after': {
+      borderBottomColor: 'black',
+    },
+    '& .MuiOutlinedInput-root': {
+      '& fieldset': {
+        borderColor: 'red',
+      },
+      '&:hover fieldset': {
+        borderColor: 'yellow',
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: 'green',
+      },
+    },
+  },
+})(TextField);
 
 import Button from '@material-ui/core/Button';
 
@@ -103,8 +126,8 @@ export class LoginForm extends PureComponent<Props, State> {
           />
         </div> */}
         <FormControl className="login-form">
-          <InputLabel htmlFor="standard-adornment-user">Email or Username</InputLabel>
-          <Input
+          {/* <InputLabel htmlFor="standard-adornment-user">Email or Username</InputLabel> */}
+          {/* <Input
             // ref={input => {
             //   this.userInput = input;
             // }}
@@ -112,6 +135,15 @@ export class LoginForm extends PureComponent<Props, State> {
             type="text"
             value={this.state.user}
             className="login-form-input"
+            required
+            aria-label={e2e.pages.Login.selectors.username}
+            onChange={this.onChangeUsername}
+          /> */}
+          <CssTextField
+            className="login-form-input"
+            id="custom-css-standard-input"
+            label="Email or Username"
+            value={this.state.user}
             required
             aria-label={e2e.pages.Login.selectors.username}
             onChange={this.onChangeUsername}
@@ -132,7 +164,7 @@ export class LoginForm extends PureComponent<Props, State> {
           />
         </div> */}
         <FormControl className="login-form">
-          <InputLabel /*htmlFor="standard-adornment-password"*/>Password</InputLabel>
+          {/* <InputLabel htmlFor="standard-adornment-password">Password</InputLabel>
           <Input
             // id="standard-adornment-password"
             type={this.state.showPassword ? 'text' : 'password'}
@@ -147,6 +179,25 @@ export class LoginForm extends PureComponent<Props, State> {
                 </IconButton>
               </InputAdornment>
             }
+          /> */}
+          <CssTextField
+            className="login-form-input"
+            id="custom-css-standard-input"
+            label="Password"
+            type={this.state.showPassword ? 'text' : 'password'}
+            value={this.state.password}
+            required
+            aria-label={e2e.pages.Login.selectors.username}
+            onChange={this.onChangePassword}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton aria-label="toggle password visibility" onClick={this.handleClickShowPassword}>
+                    {this.state.showPassword ? <Visibility /> : <VisibilityOff />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
         </FormControl>
         {/* <div className="login-button-group">
