@@ -75,7 +75,7 @@ export class LoginCtrl extends PureComponent<Props, State> {
     this.setState({
       isLoggingIn: true,
     });
-
+    console.log(formModel);
     getBackendSrv()
       .post('/login', formModel)
       .then((result: any) => {
@@ -102,6 +102,7 @@ export class LoginCtrl extends PureComponent<Props, State> {
 
   toGrafana = () => {
     const params = this.props.routeParams;
+    console.log(params);
     // Use window.location.href to force page reload
     if (params.redirect && params.redirect[0] === '/') {
       window.location.href = config.appSubUrl + params.redirect;
