@@ -54,6 +54,8 @@ interface State {
   email: string;
   showPassword: boolean;
   valid: boolean;
+  shrinkUser: boolean;
+  shrinkPassword: boolean;
 }
 
 export class LoginForm extends PureComponent<Props, State> {
@@ -62,6 +64,8 @@ export class LoginForm extends PureComponent<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
+      shrinkUser: false,
+      shrinkPassword: false,
       user: '',
       password: '',
       email: '',
@@ -102,6 +106,33 @@ export class LoginForm extends PureComponent<Props, State> {
       user: e.target.value,
       valid: this.validate(e.target.value, this.state.password),
     });
+  };
+  shrinkLabel = (sender: string) => {
+    switch (sender) {
+      case 'email':
+        this.setState({ shrinkUser: true });
+        break;
+      case 'password':
+        this.setState({ shrinkPassword: true });
+        break;
+      default:
+    }
+  };
+
+  unShrinkLabel = (sender: string) => {
+    switch (sender) {
+      case 'email':
+        if (this.state.user === '') {
+          this.setState({ shrinkUser: false });
+        }
+        break;
+      case 'password':
+        if (this.state.password === '') {
+          this.setState({ shrinkPassword: false });
+        }
+        break;
+      default:
+    }
   };
 
   validate(user: string, password: string) {
@@ -147,6 +178,9 @@ export class LoginForm extends PureComponent<Props, State> {
             required
             aria-label={e2e.pages.Login.selectors.username}
             onChange={this.onChangeUsername}
+            onFocus={() => this.shrinkLabel('email')}
+            onBlur={() => this.unShrinkLabel('email')}
+            InputLabelProps={{ shrink: this.state.shrinkUser }}
           />
         </FormControl>
         <div></div>
@@ -189,6 +223,9 @@ export class LoginForm extends PureComponent<Props, State> {
             required
             aria-label={e2e.pages.Login.selectors.username}
             onChange={this.onChangePassword}
+            onFocus={() => this.shrinkLabel('password')}
+            onBlur={() => this.unShrinkLabel('password')}
+            InputLabelProps={{ shrink: this.state.shrinkPassword }}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
