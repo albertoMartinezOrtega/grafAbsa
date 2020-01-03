@@ -91,13 +91,18 @@ interface Props {
 }
 
 interface State {
+  shrinkWifi: boolean;
+  shrinkPswd: boolean;
+  shrinkIP: boolean;
+  shrinkSubnet: boolean;
+  shrinkGateway: boolean;
+  shrinkDNS: boolean;
   settings: Settings;
   isLoading: boolean;
   valid: boolean;
   isCheckedDHCP: boolean;
   isCheckedWifi: boolean;
   showPassword: boolean;
-  errorText: string;
   wifi: string;
   wifiPswd: string;
   ipAddress: string;
@@ -108,13 +113,18 @@ interface State {
 
 export class AdminNetwork extends React.PureComponent<Props, State> {
   state: State = {
+    shrinkWifi: false,
+    shrinkPswd: false,
+    shrinkIP: false,
+    shrinkSubnet: false,
+    shrinkGateway: false,
+    shrinkDNS: false,
     settings: {},
     isLoading: true,
     valid: false,
     isCheckedDHCP: false,
     isCheckedWifi: false,
     showPassword: false,
-    errorText: '',
     wifi: '',
     wifiPswd: '',
     ipAddress: '',
@@ -183,7 +193,6 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
   onChangeIP = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.value.match(this.ipRegEx)) {
       this.setState({
-        errorText: '',
         ipAddress: e.target.value,
         valid: this.validate(
           this.state.wifi,
@@ -196,7 +205,6 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
       });
     } else {
       this.setState({
-        errorText: 'Invalid format: ###.###.###.###',
         valid: false,
       });
     }
@@ -205,7 +213,6 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
   onChangeSubMask = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.value.match(this.ipRegEx)) {
       this.setState({
-        errorText: '',
         subMask: e.target.value,
         valid: this.validate(
           this.state.wifi,
@@ -218,7 +225,6 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
       });
     } else {
       this.setState({
-        errorText: 'Invalid format: ###.###.###.###',
         valid: false,
       });
     }
@@ -227,7 +233,6 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
   onChangeDefaultGw = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.value.match(this.ipRegEx)) {
       this.setState({
-        errorText: '',
         dfGateway: e.target.value,
         valid: this.validate(
           this.state.wifi,
@@ -240,7 +245,6 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
       });
     } else {
       this.setState({
-        errorText: 'Invalid format: ###.###.###.###',
         valid: false,
       });
     }
@@ -249,7 +253,6 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
   onChangeDns = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.value.match(this.ipRegEx)) {
       this.setState({
-        errorText: '',
         dns: e.target.value,
         valid: this.validate(
           this.state.wifi,
@@ -262,7 +265,6 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
       });
     } else {
       this.setState({
-        errorText: 'Invalid format: ###.###.###.###',
         valid: false,
       });
     }
@@ -286,6 +288,65 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
       return ipAddress.length > 0 && subMask.length > 0 && dfGateway.length > 0 && dns.length > 0;
     }
   }
+
+  shrinkLabel = (sender: string) => {
+    switch (sender) {
+      case 'wifi':
+        this.setState({ shrinkWifi: true });
+        break;
+      case 'password':
+        this.setState({ shrinkPswd: true });
+        break;
+      case 'ip':
+        this.setState({ shrinkIP: true });
+        break;
+      case 'subnet':
+        this.setState({ shrinkSubnet: true });
+        break;
+      case 'gateway':
+        this.setState({ shrinkGateway: true });
+        break;
+      case 'dns':
+        this.setState({ shrinkDNS: true });
+        break;
+      default:
+    }
+  };
+  unShrinkLabel = (sender: string) => {
+    switch (sender) {
+      case 'wifi':
+        if (this.state.wifi === '') {
+          this.setState({ shrinkWifi: false });
+        }
+        break;
+      case 'password':
+        if (this.state.wifiPswd === '') {
+          this.setState({ shrinkPswd: false });
+        }
+        break;
+      case 'ip':
+        if (this.state.ipAddress === '') {
+          this.setState({ shrinkIP: false });
+        }
+        break;
+      case 'subnet':
+        if (this.state.subMask === '') {
+          this.setState({ shrinkSubnet: false });
+        }
+        break;
+      case 'gateway':
+        if (this.state.dfGateway === '') {
+          this.setState({ shrinkGateway: false });
+        }
+        break;
+      case 'dns':
+        if (this.state.dns === '') {
+          this.setState({ shrinkDNS: false });
+        }
+        break;
+      default:
+    }
+  };
 
   render() {
     const { isLoading } = this.state;
@@ -332,6 +393,9 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
                 label="Wifi"
                 disabled={!this.state.isCheckedWifi}
                 onChange={this.onChangeWifi}
+                onFocus={() => this.shrinkLabel('wifi')}
+                onBlur={() => this.unShrinkLabel('wifi')}
+                InputLabelProps={{ shrink: this.state.shrinkWifi }}
                 required
               />
             </FormControl>
@@ -345,6 +409,9 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
                 required
                 disabled={!this.state.isCheckedWifi}
                 onChange={this.onChangeWifi}
+                onFocus={() => this.shrinkLabel('password')}
+                onBlur={() => this.unShrinkLabel('password')}
+                InputLabelProps={{ shrink: this.state.shrinkPswd }}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -361,13 +428,16 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
               />
             </FormControl>
             <FormControl className="login-form">
-              <p>texto de error: {this.state.errorText}</p>
               <CssTextField
                 className="network-form-input"
                 id="custom-css-standard-input"
                 label="IP address"
+                placeholder="Format: ###.###.###.###"
                 disabled={this.state.isCheckedDHCP}
                 onChange={this.onChangeIP}
+                onFocus={() => this.shrinkLabel('ip')}
+                onBlur={() => this.unShrinkLabel('ip')}
+                InputLabelProps={{ shrink: this.state.shrinkIP }}
                 required
               />
             </FormControl>
@@ -376,8 +446,12 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
                 className="network-form-input"
                 id="custom-css-standard-input"
                 label="Subnet mask"
+                placeholder="Format: ###.###.###.###"
                 disabled={this.state.isCheckedDHCP}
                 onChange={this.onChangeSubMask}
+                onFocus={() => this.shrinkLabel('subnet')}
+                onBlur={() => this.unShrinkLabel('subnet')}
+                InputLabelProps={{ shrink: this.state.shrinkSubnet }}
                 required
               />
             </FormControl>
@@ -386,9 +460,13 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
                 className="network-form-input"
                 id="custom-css-standard-input"
                 label="Default Gateway"
+                placeholder="Format: ###.###.###.###"
                 required
                 disabled={this.state.isCheckedDHCP}
                 onChange={this.onChangeDefaultGw}
+                onFocus={() => this.shrinkLabel('gateway')}
+                onBlur={() => this.unShrinkLabel('gateway')}
+                InputLabelProps={{ shrink: this.state.shrinkGateway }}
               />
             </FormControl>
             <FormControl className="network-form">
@@ -396,9 +474,13 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
                 className="network-form-input"
                 id="custom-css-standard-input"
                 label="DNS"
+                placeholder="Format: ###.###.###.###"
                 required
                 disabled={this.state.isCheckedDHCP}
                 onChange={this.onChangeDns}
+                onFocus={() => this.shrinkLabel('dns')}
+                onBlur={() => this.unShrinkLabel('dns')}
+                InputLabelProps={{ shrink: this.state.shrinkDNS }}
               />
             </FormControl>
             <div className="network-button-group">

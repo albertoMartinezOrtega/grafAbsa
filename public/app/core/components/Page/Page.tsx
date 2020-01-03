@@ -53,7 +53,7 @@ class Page extends Component<Props> {
             <PageHeader model={navModel} />
             {this.props.children}
             <Footer
-              appName="Grafana"
+              appName="Knesys"
               buildCommit={buildInfo.commit}
               buildVersion={buildInfo.version}
               newGrafanaVersion={buildInfo.latestVersion}

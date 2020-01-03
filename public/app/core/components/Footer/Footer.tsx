@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Tooltip } from '@grafana/ui';
+// import { Tooltip } from '@grafana/ui';
 
 interface Props {
   appName: string;
@@ -14,7 +14,15 @@ export const Footer: FC<Props> = React.memo(
     return (
       <footer className="footer">
         <div className="text-center">
-          <ul>
+          <p>© ABSA, Eléctrica AB, S.A. de C.V., powered by Knesys. 2019</p>
+          <p>
+            Toda la información, conceptos intelectuales y técnicos contenidos contenida en este documento es propiedad
+            de ABSA. Los conceptos intelectuales y técnicos contenidos en este documento son propiedad de ABSA y pueden
+            estar cubiertas por patentes de EE. UU. Y extranjeras, patentes en proceso y están protegidos por secreto
+            comercial o derecho de autor. La difusión de esta información o la reproducción de este material es
+            estrictamente prohibido a menos que se obtenga un permiso previo por escrito de ABSA.
+          </p>
+          {/* <ul>
             <li>
               <a href="http://docs.grafana.org" target="_blank" rel="noopener">
                 <i className="fa fa-file-code-o" /> Docs
@@ -51,7 +59,7 @@ export const Footer: FC<Props> = React.memo(
                 </Tooltip>
               </li>
             )}
-          </ul>
+          </ul> */}
         </div>
       </footer>
     );
