@@ -134,18 +134,47 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
   handleChange = () => {
     this.setState({
       isCheckedDHCP: !this.state.isCheckedDHCP,
+      valid: this.validate(
+        this.state.wifi,
+        this.state.wifiPswd,
+        this.state.ipAddress,
+        this.state.subMask,
+        this.state.dfGateway,
+        this.state.dns
+      ),
     });
   };
 
   handleChangeWifi = () => {
     this.setState({
       isCheckedWifi: !this.state.isCheckedWifi,
+      valid: this.validate(
+        this.state.wifi,
+        this.state.wifiPswd,
+        this.state.ipAddress,
+        this.state.subMask,
+        this.state.dfGateway,
+        this.state.dns
+      ),
     });
   };
 
   handleClickShowPassword = () => {
     this.setState({
       showPassword: !this.state.showPassword,
+    });
+  };
+
+  onChangeWifi = () => {
+    this.setState({
+      valid: this.validate(
+        this.state.wifi,
+        this.state.wifiPswd,
+        this.state.ipAddress,
+        this.state.subMask,
+        this.state.dfGateway,
+        this.state.dns
+      ),
     });
   };
 
@@ -167,7 +196,7 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
       });
     } else {
       this.setState({
-        errorText: 'Invalid format: ####.####.####.####',
+        errorText: 'Invalid format: ###.###.###.###',
         valid: false,
       });
     }
@@ -189,7 +218,7 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
       });
     } else {
       this.setState({
-        errorText: 'Invalid format: ####.####.####.####',
+        errorText: 'Invalid format: ###.###.###.###',
         valid: false,
       });
     }
@@ -211,7 +240,7 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
       });
     } else {
       this.setState({
-        errorText: 'Invalid format: ####.####.####.####',
+        errorText: 'Invalid format: ###.###.###.###',
         valid: false,
       });
     }
@@ -233,14 +262,16 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
       });
     } else {
       this.setState({
-        errorText: 'Invalid format: ####.####.####.####',
+        errorText: 'Invalid format: ###.###.###.###',
         valid: false,
       });
     }
   };
 
   validate(wifi: string, wifiPswd: string, ipAddress: string, subMask: string, dfGateway: string, dns: string) {
-    if (!this.state.isCheckedWifi) {
+    if (this.state.isCheckedWifi && this.state.isCheckedDHCP) {
+      return wifi.length > 0 && wifiPswd.length > 0;
+    } else if (this.state.isCheckedWifi) {
       return (
         wifi.length > 0 &&
         wifiPswd.length > 0 &&
@@ -249,17 +280,12 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
         dfGateway.length > 0 &&
         dns.length > 0
       );
+    } else if (!this.state.isCheckedDHCP) {
+      return true;
     } else {
       return ipAddress.length > 0 && subMask.length > 0 && dfGateway.length > 0 && dns.length > 0;
     }
   }
-  // onChange(event) {
-  //   if (event.target.value.match(this.ipRegEx)) {
-  //     this.setState({ errorText: '' })
-  //   } else {
-  //     this.setState({ errorText: 'Invalid format: ###-###-####' })
-  //   }
-  // }
 
   render() {
     const { isLoading } = this.state;
@@ -270,9 +296,10 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
           <div className="grafana-info-box span8" style={{ margin: '20px 0 25px 0' }}>
             Network Configuration
           </div>
-          <form name="loginForm" className="login-form-group gf-form-group">
-            <FormControl>
+          <form name="networkForm" className="network-form-group gf-form-group">
+            <FormControl className="network-form">
               <FormControlLabel
+                className="network-buttons"
                 control={
                   <Checkbox
                     value="checkedDHCP"
@@ -283,13 +310,8 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
                 }
                 label="DHCP"
               />
-              <FormControlLabel
-                control={
-                  <Switch checked={this.state.isCheckedWifi} onChange={this.handleChangeWifi} value="checkedWifi" />
-                }
-                label={this.state.isCheckedWifi ? 'Wifi' : 'Ethernet'}
-              />
-              <Typography>
+              <Typography className="network-wifi">
+                <p className="netwotk-label">Connection</p>
                 <Grid component="label" container alignItems="center" spacing={1}>
                   <Grid item>Ethernet</Grid>
                   <Grid item>
@@ -303,40 +325,26 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
                 </Grid>
               </Typography>
             </FormControl>
-            <FormControl>
-              <p>Connection</p>
-              <FormControlLabel
-                control={
-                  <Switch checked={!this.state.isCheckedWifi} onChange={this.handleChangeWifi} value="checkedWifi" />
-                }
-                label="Ethernet"
-              />
-              <FormControlLabel
-                control={
-                  <Switch checked={this.state.isCheckedWifi} onChange={this.handleChangeWifi} value="checkedWifi" />
-                }
-                label="Wifi"
-              />
-            </FormControl>
-            <FormControl className="login-form">
+            <FormControl className="network-form">
               <CssTextField
-                className="login-form-input"
+                className="network-form-input"
                 id="custom-css-standard-input"
                 label="Wifi"
                 disabled={!this.state.isCheckedWifi}
+                onChange={this.onChangeWifi}
                 required
               />
             </FormControl>
-            <FormControl className="login-form">
+            <FormControl className="network-form">
               <CssTextField
-                className="login-form-input"
+                className="network-form-input"
                 id="custom-css-standard-input"
                 label="Password"
                 type={this.state.showPassword ? 'text' : 'password'}
                 // value={this.state.password}
                 required
                 disabled={!this.state.isCheckedWifi}
-                // onChange={this.onChangePassword}
+                onChange={this.onChangeWifi}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -355,26 +363,17 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
             <FormControl className="login-form">
               <p>texto de error: {this.state.errorText}</p>
               <CssTextField
-                className="login-form-input"
+                className="network-form-input"
                 id="custom-css-standard-input"
                 label="IP address"
                 disabled={this.state.isCheckedDHCP}
                 onChange={this.onChangeIP}
                 required
               />
-              {/* <TextField
-                className="login-form-input"
-                id="custom-css-standard-input"
-                label="IP address"
-                disabled={this.state.isCheckedDHCP}
-                onChange={this.onChange.bind(this)}
-                required
-              /> */}
             </FormControl>
-            <FormControl className="login-form">
-              <p>texto de error: {this.state.errorText}</p>
+            <FormControl className="network-form">
               <CssTextField
-                className="login-form-input"
+                className="network-form-input"
                 id="custom-css-standard-input"
                 label="Subnet mask"
                 disabled={this.state.isCheckedDHCP}
@@ -382,10 +381,9 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
                 required
               />
             </FormControl>
-            <FormControl className="login-form">
-              <p>texto de error: {this.state.errorText}</p>
+            <FormControl className="network-form">
               <CssTextField
-                className="login-form-input"
+                className="network-form-input"
                 id="custom-css-standard-input"
                 label="Default Gateway"
                 required
@@ -393,10 +391,9 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
                 onChange={this.onChangeDefaultGw}
               />
             </FormControl>
-            <FormControl className="login-form">
-              <p>texto de error: {this.state.errorText}</p>
+            <FormControl className="network-form">
               <CssTextField
-                className="login-form-input"
+                className="network-form-input"
                 id="custom-css-standard-input"
                 label="DNS"
                 required
@@ -404,14 +401,9 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
                 onChange={this.onChangeDns}
               />
             </FormControl>
-            <div className="login-button-group">
+            <div className="network-button-group">
               <p>valid: {this.state.valid}</p>
-              <Button
-                type="submit"
-                variant="contained"
-                className={`btn btn-large p-x-2 'btn-knesys-login'`}
-                disabled={!this.state.valid}
-              >
+              <Button type="submit" variant="contained" className={`btn btn-large p-x-2 `} disabled={!this.state.valid}>
                 Submit
               </Button>
             </div>
