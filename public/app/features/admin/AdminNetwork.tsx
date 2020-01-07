@@ -66,22 +66,6 @@ const PurpleSwitch = withStyles({
   track: {},
 })(Switch);
 
-// import MaskedInput from 'react-text-mask';
-// function TextMaskCustom(props: { [x: string]: any; inputRef: any; }) {
-//   const { inputRef, ...other } = props;
-
-//   return (
-//     <MaskedInput
-//       {...other}
-//       ref={(ref: { inputElement: any; }) => {
-//         inputRef(ref ? ref.inputElement : null);
-//       }}
-//       mask={[/\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/,'.', /\d/, /\d/, /\d/]}
-//       placeholderChar={'\u2000'}
-//     />
-//   );
-// }
-
 const backendSrv = getBackendSrv();
 
 type Settings = { [key: string]: { [key: string]: string } };
@@ -141,9 +125,8 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
     });
   }
 
-  handleChange = () => {
+  validator() {
     this.setState({
-      isCheckedDHCP: !this.state.isCheckedDHCP,
       valid: this.validate(
         this.state.wifi,
         this.state.wifiPswd,
@@ -153,20 +136,46 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
         this.state.dns
       ),
     });
+  }
+
+  handleChange = () => {
+    this.setState(
+      {
+        isCheckedDHCP: !this.state.isCheckedDHCP,
+      },
+      () => {
+        this.setState({
+          valid: this.validate(
+            this.state.wifi,
+            this.state.wifiPswd,
+            this.state.ipAddress,
+            this.state.subMask,
+            this.state.dfGateway,
+            this.state.dns
+          ),
+        });
+      }
+    );
   };
 
   handleChangeWifi = () => {
-    this.setState({
-      isCheckedWifi: !this.state.isCheckedWifi,
-      valid: this.validate(
-        this.state.wifi,
-        this.state.wifiPswd,
-        this.state.ipAddress,
-        this.state.subMask,
-        this.state.dfGateway,
-        this.state.dns
-      ),
-    });
+    this.setState(
+      {
+        isCheckedWifi: !this.state.isCheckedWifi,
+      },
+      () => {
+        this.setState({
+          valid: this.validate(
+            this.state.wifi,
+            this.state.wifiPswd,
+            this.state.ipAddress,
+            this.state.subMask,
+            this.state.dfGateway,
+            this.state.dns
+          ),
+        });
+      }
+    );
   };
 
   handleClickShowPassword = () => {
@@ -175,11 +184,26 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
     });
   };
 
-  onChangeWifi = () => {
+  onChangeWifi = (e: ChangeEvent<HTMLInputElement>) => {
     this.setState({
+      wifi: e.target.value,
+      valid: this.validate(
+        e.target.value,
+        this.state.wifiPswd,
+        this.state.ipAddress,
+        this.state.subMask,
+        this.state.dfGateway,
+        this.state.dns
+      ),
+    });
+  };
+
+  onChangeWifiPswd = (e: ChangeEvent<HTMLInputElement>) => {
+    this.setState({
+      wifiPswd: e.target.value,
       valid: this.validate(
         this.state.wifi,
-        this.state.wifiPswd,
+        e.target.value,
         this.state.ipAddress,
         this.state.subMask,
         this.state.dfGateway,
@@ -191,102 +215,85 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
   ipRegEx = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/gm;
 
   onChangeIP = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value.match(this.ipRegEx)) {
-      this.setState({
-        ipAddress: e.target.value,
-        valid: this.validate(
-          this.state.wifi,
-          this.state.wifiPswd,
-          e.target.value,
-          this.state.subMask,
-          this.state.dfGateway,
-          this.state.dns
-        ),
-      });
-    } else {
-      this.setState({
-        valid: false,
-      });
-    }
+    this.setState({
+      ipAddress: e.target.value,
+      valid: this.validate(
+        this.state.wifi,
+        this.state.wifiPswd,
+        e.target.value,
+        this.state.subMask,
+        this.state.dfGateway,
+        this.state.dns
+      ),
+    });
   };
 
   onChangeSubMask = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value.match(this.ipRegEx)) {
-      this.setState({
-        subMask: e.target.value,
-        valid: this.validate(
-          this.state.wifi,
-          this.state.wifiPswd,
-          this.state.ipAddress,
-          e.target.value,
-          this.state.dfGateway,
-          this.state.dns
-        ),
-      });
-    } else {
-      this.setState({
-        valid: false,
-      });
-    }
+    this.setState({
+      subMask: e.target.value,
+      valid: this.validate(
+        this.state.wifi,
+        this.state.wifiPswd,
+        this.state.ipAddress,
+        e.target.value,
+        this.state.dfGateway,
+        this.state.dns
+      ),
+    });
   };
 
   onChangeDefaultGw = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value.match(this.ipRegEx)) {
-      this.setState({
-        dfGateway: e.target.value,
-        valid: this.validate(
-          this.state.wifi,
-          this.state.wifiPswd,
-          this.state.ipAddress,
-          this.state.subMask,
-          e.target.value,
-          this.state.dns
-        ),
-      });
-    } else {
-      this.setState({
-        valid: false,
-      });
-    }
+    this.setState({
+      dfGateway: e.target.value,
+      valid: this.validate(
+        this.state.wifi,
+        this.state.wifiPswd,
+        this.state.ipAddress,
+        this.state.subMask,
+        e.target.value,
+        this.state.dns
+      ),
+    });
   };
 
   onChangeDns = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value.match(this.ipRegEx)) {
-      this.setState({
-        dns: e.target.value,
-        valid: this.validate(
-          this.state.wifi,
-          this.state.wifiPswd,
-          this.state.ipAddress,
-          this.state.subMask,
-          this.state.dfGateway,
-          e.target.value
-        ),
-      });
-    } else {
-      this.setState({
-        valid: false,
-      });
-    }
+    this.setState({
+      dns: e.target.value,
+      valid: this.validate(
+        this.state.wifi,
+        this.state.wifiPswd,
+        this.state.ipAddress,
+        this.state.subMask,
+        this.state.dfGateway,
+        e.target.value
+      ),
+    });
   };
 
   validate(wifi: string, wifiPswd: string, ipAddress: string, subMask: string, dfGateway: string, dns: string) {
     if (this.state.isCheckedWifi && this.state.isCheckedDHCP) {
       return wifi.length > 0 && wifiPswd.length > 0;
-    } else if (this.state.isCheckedWifi) {
+    } else if (this.state.isCheckedWifi && !this.state.isCheckedDHCP) {
       return (
         wifi.length > 0 &&
         wifiPswd.length > 0 &&
-        ipAddress.length > 0 &&
-        subMask.length > 0 &&
-        dfGateway.length > 0 &&
-        dns.length > 0
+        ipAddress.match(this.ipRegEx) && true &&
+        subMask.match(this.ipRegEx) && true &&
+        dfGateway.match(this.ipRegEx) && true &&
+        dns.match(this.ipRegEx) && true
       );
-    } else if (!this.state.isCheckedDHCP) {
+    } else if (this.state.isCheckedDHCP && !this.state.isCheckedWifi) {
       return true;
     } else {
-      return ipAddress.length > 0 && subMask.length > 0 && dfGateway.length > 0 && dns.length > 0;
+      return (
+        ipAddress.match(this.ipRegEx) &&
+        true &&
+        subMask.match(this.ipRegEx) && true &&
+        dfGateway.match(this.ipRegEx) && true &&
+        dns.match(this.ipRegEx) && true
+      );
     }
+    this.forceUpdate();
   }
 
   shrinkLabel = (sender: string) => {
@@ -358,33 +365,35 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
             Network Configuration
           </div>
           <form name="networkForm" className="network-form-group gf-form-group">
-            <FormControl className="network-form">
-              <FormControlLabel
-                className="network-buttons"
-                control={
-                  <Checkbox
-                    value="checkedDHCP"
-                    color="primary"
-                    checked={this.state.isCheckedDHCP}
-                    onChange={this.handleChange}
-                  />
-                }
-                label="DHCP"
-              />
-              <Typography className="network-wifi">
-                <p className="netwotk-label">Connection</p>
-                <Grid component="label" container alignItems="center" spacing={1}>
-                  <Grid item>Ethernet</Grid>
-                  <Grid item>
-                    <PurpleSwitch
-                      checked={this.state.isCheckedWifi}
-                      onChange={this.handleChangeWifi}
-                      value="checkedWifi"
+            <FormControl className="network-form-buttons">
+              <div className="network-alignment">
+                <FormControlLabel
+                  className="network-buttons"
+                  control={
+                    <Checkbox
+                      value="checkedDHCP"
+                      color="primary"
+                      checked={this.state.isCheckedDHCP}
+                      onChange={this.handleChange}
                     />
+                  }
+                  label="DHCP"
+                />
+                <Typography className="network-wifi">
+                  <p className="network-label">Connection</p>
+                  <Grid component="label" container alignItems="center" spacing={1}>
+                    <Grid item>Ethernet</Grid>
+                    <Grid item>
+                      <PurpleSwitch
+                        checked={this.state.isCheckedWifi}
+                        onChange={this.handleChangeWifi}
+                        value="checkedWifi"
+                      />
+                    </Grid>
+                    <Grid item>Wifi</Grid>
                   </Grid>
-                  <Grid item>Wifi</Grid>
-                </Grid>
-              </Typography>
+                </Typography>
+              </div>
             </FormControl>
             <FormControl className="network-form">
               <CssTextField
@@ -408,7 +417,7 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
                 // value={this.state.password}
                 required
                 disabled={!this.state.isCheckedWifi}
-                onChange={this.onChangeWifi}
+                onChange={this.onChangeWifiPswd}
                 onFocus={() => this.shrinkLabel('password')}
                 onBlur={() => this.unShrinkLabel('password')}
                 InputLabelProps={{ shrink: this.state.shrinkPswd }}
@@ -427,7 +436,7 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
                 }}
               />
             </FormControl>
-            <FormControl className="login-form">
+            <FormControl className="network-form">
               <CssTextField
                 className="network-form-input"
                 id="custom-css-standard-input"
@@ -484,7 +493,6 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
               />
             </FormControl>
             <div className="network-button-group">
-              <p>valid: {this.state.valid}</p>
               <Button type="submit" variant="contained" className={`btn btn-large p-x-2 `} disabled={!this.state.valid}>
                 Submit
               </Button>
