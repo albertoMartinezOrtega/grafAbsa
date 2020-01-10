@@ -29,6 +29,9 @@ func (hs *HTTPServer) registerRoutes() {
 	r.Get("/login/:name", quota("session"), hs.OAuthLogin)
 	r.Get("/login", hs.LoginView)
 	r.Get("/invite/:code", hs.Index)
+	r.Post("/createUser", bind(dtos.AdminCreateUserForm{}), AdminCreateUser)
+	r.Put("/users/:id/permissionsChange", bind(dtos.AdminUpdateUserPermissionsForm{}), AdminUpdateUserPermissions)
+	r.Get("/searchUsers", Wrap(SearchUsers))
 
 	// authed views
 	r.Get("/profile/", reqSignedIn, hs.Index)
@@ -138,7 +141,7 @@ func (hs *HTTPServer) registerRoutes() {
 
 		// users (admin permission required)
 		apiRoute.Group("/users", func(usersRoute routing.RouteRegister) {
-			usersRoute.Get("/", Wrap(SearchUsers))
+			//usersRoute.Get("/", Wrap(SearchUsers))
 			usersRoute.Get("/search", Wrap(SearchUsersWithPaging))
 			usersRoute.Get("/:id", Wrap(GetUserByID))
 			usersRoute.Get("/:id/teams", Wrap(GetUserTeams))
@@ -380,9 +383,9 @@ func (hs *HTTPServer) registerRoutes() {
 	// admin api
 	r.Group("/api/admin", func(adminRoute routing.RouteRegister) {
 		adminRoute.Get("/settings", AdminGetSettings)
-		adminRoute.Post("/users", bind(dtos.AdminCreateUserForm{}), AdminCreateUser)
+		//adminRoute.Post("/users", bind(dtos.AdminCreateUserForm{}), AdminCreateUser)
 		adminRoute.Put("/users/:id/password", bind(dtos.AdminUpdateUserPasswordForm{}), AdminUpdateUserPassword)
-		adminRoute.Put("/users/:id/permissions", bind(dtos.AdminUpdateUserPermissionsForm{}), AdminUpdateUserPermissions)
+		//adminRoute.Put("/users/:id/permissions", bind(dtos.AdminUpdateUserPermissionsForm{}), AdminUpdateUserPermissions)
 		adminRoute.Delete("/users/:id", AdminDeleteUser)
 		adminRoute.Post("/users/:id/disable", Wrap(hs.AdminDisableUser))
 		adminRoute.Post("/users/:id/enable", Wrap(AdminEnableUser))

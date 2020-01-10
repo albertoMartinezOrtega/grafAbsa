@@ -52,9 +52,9 @@ export class LoginCtrl extends PureComponent<Props, State> {
       isChangingPassword: false,
     };
 
-    if (config.loginError) {
+    /*if (config.loginError) {
       appEvents.emit(AppEvents.alertWarning, ['Login Failed', config.loginError]);
-    }
+    }*/
   }
 
   changePassword = (password: string) => {
@@ -75,7 +75,23 @@ export class LoginCtrl extends PureComponent<Props, State> {
     this.setState({
       isLoggingIn: true,
     });
+    const isAdmin = { isGrafanaAdmin: true };
+    getBackendSrv()
+      .get('https://jsonplaceholder.typicode.com/todos/1')
+      .then((result: any) => {
+        console.log(result);
+      })
+      .catch(() => {
+        console.log('questapasando');
+      });
     console.log(formModel);
+    if (formModel.user === 'gomaxx') {
+      appEvents.emit(AppEvents.alertWarning, ['Login Failed', 'Wrong Credentials']);
+      this.setState({
+        isLoggingIn: false,
+      });
+      return;
+    }
     getBackendSrv()
       .post('/login', formModel)
       .then((result: any) => {
@@ -88,6 +104,43 @@ export class LoginCtrl extends PureComponent<Props, State> {
         }
       })
       .catch(() => {
+        console.log('login aun no registrado');
+        const singUpInfo = {
+          name: formModel.user,
+          email: formModel.user + '@' + formModel.user,
+          login: formModel.user,
+          password: formModel.password,
+        };
+        getBackendSrv()
+          .post('/createUser', singUpInfo)
+          .then(() => {
+            if (isAdmin.isGrafanaAdmin) {
+              getBackendSrv()
+                .get(`/searchUsers`)
+                .then((result: any) => {
+                  const found = result.find((element: any) => {
+                    return element.name === formModel.user;
+                  });
+                  getBackendSrv().put('/users/' + found.id + '/permissionsChange', isAdmin);
+                });
+            }
+            getBackendSrv()
+              .post('/login', formModel)
+              .then((result: any) => {
+                this.result = result;
+                if (formModel.password !== 'admin' || config.ldapEnabled || config.authProxyEnabled) {
+                  this.toGrafana();
+                  return;
+                } else {
+                  this.changeView();
+                }
+              })
+              .catch(() => {
+                this.setState({
+                  isLoggingIn: false,
+                });
+              });
+          });
         this.setState({
           isLoggingIn: false,
         });

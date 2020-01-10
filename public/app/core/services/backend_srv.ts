@@ -83,8 +83,9 @@ export class BackendSrv implements BackendService {
         description = message;
         message = 'Error';
       }
-
-      appEvents.emit(err.status < 500 ? AppEvents.alertWarning : AppEvents.alertError, [message, description]);
+      if (err.status !== 401) {
+        appEvents.emit(err.status < 500 ? AppEvents.alertWarning : AppEvents.alertError, [message, description]);
+      }
     }
 
     throw data;
