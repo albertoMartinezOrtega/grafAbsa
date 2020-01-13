@@ -91,7 +91,17 @@ a[disabled] {
 }
 .text-center {
   text-align: center;
-  margin-left: 10px;
+  margin-left: 10%;
+  margin-right: 10%;
+  margin-top: 30px;
+  min-width: 260px;
+}
+.text-center-login {
+  text-align: center;
+  margin-left: 5%;
+  margin-right: 5%;
+  margin-top: 30px;
+  min-width: 260px;
 }
 
 //

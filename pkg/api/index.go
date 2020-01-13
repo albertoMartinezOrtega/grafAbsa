@@ -264,25 +264,26 @@ func (hs *HTTPServer) setIndexViewData(c *m.ReqContext) (*dtos.IndexViewData, er
 			Id:          "datasources",
 			Url:         setting.AppSubUrl + "/datasources",
 		})
-		configNodes = append(configNodes, &dtos.NavLink{
-			Text:        "Users",
-			Id:          "users",
-			Description: "Manage org members",
-			Icon:        "gicon gicon-user",
-			Url:         setting.AppSubUrl + "/org/users",
-		})
+		// configNodes = append(configNodes, &dtos.NavLink{
+		// 	Text:        "Users",
+		// 	Id:          "users",
+		// 	Description: "Manage org members",
+		// 	Icon:        "gicon gicon-user",
+		// 	Url:         setting.AppSubUrl + "/org/users",
+		// })
 	}
 
-	if c.OrgRole == m.ROLE_ADMIN || hs.Cfg.EditorsCanAdmin {
-		configNodes = append(configNodes, &dtos.NavLink{
-			Text:        "Teams",
-			Id:          "teams",
-			Description: "Manage org groups",
-			Icon:        "gicon gicon-team",
-			Url:         setting.AppSubUrl + "/org/teams",
-		})
-	}
+	// if c.OrgRole == m.ROLE_ADMIN || hs.Cfg.EditorsCanAdmin {
+	// 	configNodes = append(configNodes, &dtos.NavLink{
+	// 		Text:        "Teams",
+	// 		Id:          "teams",
+	// 		Description: "Manage org groups",
+	// 		Icon:        "gicon gicon-team",
+	// 		Url:         setting.AppSubUrl + "/org/teams",
+	// 	})
+	// }
 
+	// No se puede quitar ya que es el elemento [0] del arreglo
 	configNodes = append(configNodes, &dtos.NavLink{
 		Text:        "Plugins",
 		Id:          "plugins",
@@ -299,13 +300,13 @@ func (hs *HTTPServer) setIndexViewData(c *m.ReqContext) (*dtos.IndexViewData, er
 			Icon:        "gicon gicon-preferences",
 			Url:         setting.AppSubUrl + "/org",
 		})
-		configNodes = append(configNodes, &dtos.NavLink{
-			Text:        "API Keys",
-			Id:          "apikeys",
-			Description: "Create & manage API keys",
-			Icon:        "gicon gicon-apikeys",
-			Url:         setting.AppSubUrl + "/org/apikeys",
-		})
+		// configNodes = append(configNodes, &dtos.NavLink{
+		// 	Text:        "API Keys",
+		// 	Id:          "apikeys",
+		// 	Description: "Create & manage API keys",
+		// 	Icon:        "gicon gicon-apikeys",
+		// 	Url:         setting.AppSubUrl + "/org/apikeys",
+		// })
 	}
 
 	data.NavTree = append(data.NavTree, &dtos.NavLink{
@@ -321,10 +322,11 @@ func (hs *HTTPServer) setIndexViewData(c *m.ReqContext) (*dtos.IndexViewData, er
 	if c.IsGrafanaAdmin {
 		adminNavLinks := []*dtos.NavLink{
 			{Text: "Users", Id: "global-users", Url: setting.AppSubUrl + "/admin/users", Icon: "gicon gicon-user"},
-			{Text: "Orgs", Id: "global-orgs", Url: setting.AppSubUrl + "/admin/orgs", Icon: "gicon gicon-org"},
-			{Text: "Settings", Id: "server-settings", Url: setting.AppSubUrl + "/admin/settings", Icon: "gicon gicon-preferences"},
+			// {Text: "Orgs", Id: "global-orgs", Url: setting.AppSubUrl + "/admin/orgs", Icon: "gicon gicon-org"},
+			// {Text: "Settings", Id: "server-settings", Url: setting.AppSubUrl + "/admin/settings", Icon: "gicon gicon-preferences"},
 			{Text: "Stats", Id: "server-stats", Url: setting.AppSubUrl + "/admin/stats", Icon: "fa fa-fw fa-bar-chart"},
 			{Text: "Network", Id: "network-settings", Url: setting.AppSubUrl + "/admin/network-settings", Icon: "gicon gicon-preferences"},
+			{Text: "Cloud", Id: "cloud-settings", Url: setting.AppSubUrl + "/admin/cloud-settings", Icon: "gicon gicon-cloud"},
 		}
 
 		if setting.LDAPEnabled {

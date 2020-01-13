@@ -295,6 +295,12 @@ export function setupAngularRoutes($routeProvider: route.IRouteProvider, $locati
         component: () => SafeDynamicImport(import('app/features/admin/AdminNetwork')),
       },
     })
+    .when('/admin/cloud-settings', {
+      template: '<react-container />',
+      resolve: {
+        component: () => SafeDynamicImport(import('app/features/admin/AdminCloud')),
+      },
+    })
     .when('/admin/users', {
       templateUrl: 'public/app/features/admin/partials/users.html',
       controller: 'AdminListUsersCtrl',

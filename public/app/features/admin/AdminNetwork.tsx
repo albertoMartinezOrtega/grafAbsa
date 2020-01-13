@@ -21,7 +21,6 @@ import Checkbox from '@material-ui/core/Checkbox';
 //switch
 import Switch from '@material-ui/core/Switch';
 import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
 
 //wifi password
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -57,8 +56,15 @@ const PurpleSwitch = withStyles({
     color: '#00a0ff',
     '&$checked': {
       color: '#00a0ff',
+      '&&:hover': {
+        backgroundColor: '#d9d9d9',
+        opacity: '0.5',
+      },
     },
     '&$checked + $track': {
+      backgroundColor: '#d9d9d9',
+    },
+    '&:not($checked) + $track': {
       backgroundColor: '#d9d9d9',
     },
   },
@@ -277,10 +283,14 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
       return (
         wifi.length > 0 &&
         wifiPswd.length > 0 &&
-        ipAddress.match(this.ipRegEx) && true &&
-        subMask.match(this.ipRegEx) && true &&
-        dfGateway.match(this.ipRegEx) && true &&
-        dns.match(this.ipRegEx) && true
+        ipAddress.match(this.ipRegEx) &&
+        true &&
+        subMask.match(this.ipRegEx) &&
+        true &&
+        dfGateway.match(this.ipRegEx) &&
+        true &&
+        dns.match(this.ipRegEx) &&
+        true
       );
     } else if (this.state.isCheckedDHCP && !this.state.isCheckedWifi) {
       return true;
@@ -288,9 +298,12 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
       return (
         ipAddress.match(this.ipRegEx) &&
         true &&
-        subMask.match(this.ipRegEx) && true &&
-        dfGateway.match(this.ipRegEx) && true &&
-        dns.match(this.ipRegEx) && true
+        subMask.match(this.ipRegEx) &&
+        true &&
+        dfGateway.match(this.ipRegEx) &&
+        true &&
+        dns.match(this.ipRegEx) &&
+        true
       );
     }
     this.forceUpdate();
@@ -366,39 +379,35 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
           </div>
           <form name="networkForm" className="network-form-group gf-form-group">
             <FormControl className="network-form-buttons">
-              <div className="network-alignment">
-                <FormControlLabel
-                  className="network-buttons"
-                  control={
-                    <Checkbox
-                      value="checkedDHCP"
-                      color="primary"
-                      checked={this.state.isCheckedDHCP}
-                      onChange={this.handleChange}
-                    />
-                  }
-                  label="DHCP"
-                />
-                <Typography className="network-wifi">
-                  <p className="network-label">Connection</p>
-                  <Grid component="label" container alignItems="center" spacing={1}>
-                    <Grid item>Ethernet</Grid>
-                    <Grid item>
-                      <PurpleSwitch
-                        checked={this.state.isCheckedWifi}
-                        onChange={this.handleChangeWifi}
-                        value="checkedWifi"
-                      />
-                    </Grid>
-                    <Grid item>Wifi</Grid>
-                  </Grid>
-                </Typography>
-              </div>
+              <Grid component="label" container alignItems="center" spacing={1}>
+                <Grid item>Ethernet</Grid>
+                <Grid item>
+                  <PurpleSwitch
+                    checked={this.state.isCheckedWifi}
+                    onChange={this.handleChangeWifi}
+                    value="checkedWifi"
+                  />
+                </Grid>
+                <Grid item>Wifi</Grid>
+              </Grid>
+            </FormControl>
+            <FormControl className="network-form-buttons">
+              <FormControlLabel
+                className="network-buttons"
+                control={
+                  <Checkbox
+                    value="checkedDHCP"
+                    color="primary"
+                    checked={this.state.isCheckedDHCP}
+                    onChange={this.handleChange}
+                  />
+                }
+                label="DHCP"
+              />
             </FormControl>
             <FormControl className="network-form">
               <CssTextField
                 className="network-form-input"
-                id="custom-css-standard-input"
                 label="Wifi"
                 disabled={!this.state.isCheckedWifi}
                 onChange={this.onChangeWifi}
@@ -411,7 +420,6 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
             <FormControl className="network-form">
               <CssTextField
                 className="network-form-input"
-                id="custom-css-standard-input"
                 label="Password"
                 type={this.state.showPassword ? 'text' : 'password'}
                 // value={this.state.password}
@@ -439,21 +447,27 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
             <FormControl className="network-form">
               <CssTextField
                 className="network-form-input"
-                id="custom-css-standard-input"
                 label="IP address"
+                value={this.state.ipAddress}
                 placeholder="Format: ###.###.###.###"
                 disabled={this.state.isCheckedDHCP}
                 onChange={this.onChangeIP}
                 onFocus={() => this.shrinkLabel('ip')}
                 onBlur={() => this.unShrinkLabel('ip')}
                 InputLabelProps={{ shrink: this.state.shrinkIP }}
+                inputProps={{ maxLength: 15 }}
+                error={(this.state.ipAddress.match(this.ipRegEx) && true) || this.state.isCheckedDHCP ? false : true}
+                helperText={
+                  (this.state.ipAddress.match(this.ipRegEx) && true) || this.state.isCheckedDHCP
+                    ? ''
+                    : 'Incorrect input.'
+                }
                 required
               />
             </FormControl>
             <FormControl className="network-form">
               <CssTextField
                 className="network-form-input"
-                id="custom-css-standard-input"
                 label="Subnet mask"
                 placeholder="Format: ###.###.###.###"
                 disabled={this.state.isCheckedDHCP}
@@ -461,13 +475,17 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
                 onFocus={() => this.shrinkLabel('subnet')}
                 onBlur={() => this.unShrinkLabel('subnet')}
                 InputLabelProps={{ shrink: this.state.shrinkSubnet }}
+                inputProps={{ maxLength: 15 }}
+                error={(this.state.subMask.match(this.ipRegEx) && true) || this.state.isCheckedDHCP ? false : true}
+                helperText={
+                  (this.state.subMask.match(this.ipRegEx) && true) || this.state.isCheckedDHCP ? '' : 'Incorrect input.'
+                }
                 required
               />
             </FormControl>
             <FormControl className="network-form">
               <CssTextField
                 className="network-form-input"
-                id="custom-css-standard-input"
                 label="Default Gateway"
                 placeholder="Format: ###.###.###.###"
                 required
@@ -476,12 +494,18 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
                 onFocus={() => this.shrinkLabel('gateway')}
                 onBlur={() => this.unShrinkLabel('gateway')}
                 InputLabelProps={{ shrink: this.state.shrinkGateway }}
+                inputProps={{ maxLength: 15 }}
+                error={(this.state.dfGateway.match(this.ipRegEx) && true) || this.state.isCheckedDHCP ? false : true}
+                helperText={
+                  (this.state.dfGateway.match(this.ipRegEx) && true) || this.state.isCheckedDHCP
+                    ? ''
+                    : 'Incorrect input.'
+                }
               />
             </FormControl>
             <FormControl className="network-form">
               <CssTextField
                 className="network-form-input"
-                id="custom-css-standard-input"
                 label="DNS"
                 placeholder="Format: ###.###.###.###"
                 required
@@ -490,6 +514,11 @@ export class AdminNetwork extends React.PureComponent<Props, State> {
                 onFocus={() => this.shrinkLabel('dns')}
                 onBlur={() => this.unShrinkLabel('dns')}
                 InputLabelProps={{ shrink: this.state.shrinkDNS }}
+                inputProps={{ maxLength: 15 }}
+                error={(this.state.dns.match(this.ipRegEx) && true) || this.state.isCheckedDHCP ? false : true}
+                helperText={
+                  (this.state.dns.match(this.ipRegEx) && true) || this.state.isCheckedDHCP ? '' : 'Incorrect input.'
+                }
               />
             </FormControl>
             <div className="network-button-group">

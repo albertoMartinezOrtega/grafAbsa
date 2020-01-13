@@ -16,9 +16,8 @@ export const Footer: FC<Props> = React.memo(
         <div className="text-center">
           <p>© ABSA, Eléctrica AB, S.A. de C.V., powered by Knesys. 2019</p>
           <p>
-            Toda la información, conceptos intelectuales y técnicos contenidos contenida en este documento es propiedad
-            de ABSA. Los conceptos intelectuales y técnicos contenidos en este documento son propiedad de ABSA y pueden
-            estar cubiertas por patentes de EE. UU. Y extranjeras, patentes en proceso y están protegidos por secreto
+            Toda la información, conceptos técnicos e intelectuales contenidos en este documento son propiedad de ABSA.
+            Pueden estar cubiertos por patentes extranjeras, patentes en proceso y están protegidos por secreto
             comercial o derecho de autor. La difusión de esta información o la reproducción de este material es
             estrictamente prohibido a menos que se obtenga un permiso previo por escrito de ABSA.
           </p>
