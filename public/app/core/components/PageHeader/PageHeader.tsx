@@ -61,8 +61,8 @@ const Tabs = ({ main, customCss }: { main: NavModelItem; customCss: string }) =>
         });
 
         return (
-          <span>
-            <li className="gf-tabs-item">
+          <span key={tab.url}>
+            <li className="gf-tabs-item" /*key={tab.url}*/>
               <a target={tab.target} href={tab.url}>
                 <Tab className={tabClasses} icon={<i className={tab.icon} />} label={tab.text} />
               </a>
