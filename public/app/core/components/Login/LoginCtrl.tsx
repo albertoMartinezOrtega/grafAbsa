@@ -105,42 +105,130 @@ export class LoginCtrl extends PureComponent<Props, State> {
       })
       .catch(() => {
         console.log('login aun no registrado');
-        const singUpInfo = {
-          name: formModel.user,
-          email: formModel.user + '@' + formModel.user,
-          login: formModel.user,
-          password: formModel.password,
+        const usuarioAChecar = {
+          password: '@123Qwer', //formModel.password,
+          account: 'jorgito@gmail.com', //formModel.user,
         };
         getBackendSrv()
-          .post('/createUser', singUpInfo)
-          .then(() => {
-            if (isAdmin.isGrafanaAdmin) {
+          .post('https://api.knesys.com/ksum/API/Admin/Grafana/Login/', usuarioAChecar)
+          .then((respuesta: any) => {
+            if (respuesta.Status !== 'Error') {
+              console.log('-------------------------si existe el usuario---------------------------');
+              const singUpInfo = {
+                name: formModel.user,
+                email: formModel.user + '@' + formModel.user,
+                login: formModel.user,
+                password: formModel.password,
+              };
               getBackendSrv()
-                .get(`/searchUsers`)
-                .then((result: any) => {
-                  const found = result.find((element: any) => {
-                    return element.name === formModel.user;
-                  });
-                  getBackendSrv().put('/users/' + found.id + '/permissionsChange', isAdmin);
+                .post('/createUser', singUpInfo)
+                .then(() => {
+                  if (isAdmin.isGrafanaAdmin) {
+                    getBackendSrv()
+                      .get(`/searchUsers`)
+                      .then((result: any) => {
+                        const found = result.find((element: any) => {
+                          return element.name === formModel.user;
+                        });
+                        getBackendSrv().put('/users/' + found.id + '/permissionsChange', isAdmin);
+                      });
+                  }
+                  getBackendSrv()
+                    .post('/login', formModel)
+                    .then((result: any) => {
+                      const info = {
+                        theme: '',
+                        homeDashboardId: 1,
+                        timezone: 'browser',
+                      };
+                      getBackendSrv()
+                        .put('/api/user/preferences', info)
+                        .then((resultado: any) => {
+                          console.log('hecho!');
+                          console.log(resultado);
+                        })
+                        .catch((resultado: any) => {
+                          console.log('error: ', resultado);
+                        });
+
+                      this.result = result;
+                      if (formModel.password !== 'admin' || config.ldapEnabled || config.authProxyEnabled) {
+                        // this.toGrafana();
+                        return;
+                      } else {
+                        // this.changeView();
+                      }
+                    })
+                    .catch(() => {
+                      this.setState({
+                        isLoggingIn: false,
+                      });
+                    });
                 });
-            }
-            getBackendSrv()
-              .post('/login', formModel)
-              .then((result: any) => {
-                this.result = result;
-                if (formModel.password !== 'admin' || config.ldapEnabled || config.authProxyEnabled) {
-                  this.toGrafana();
-                  return;
-                } else {
-                  this.changeView();
-                }
-              })
-              .catch(() => {
-                this.setState({
-                  isLoggingIn: false,
-                });
+              console.log('------------------------------------------------------------------------');
+            } else {
+              console.log('-------------------------no existe el usuario---------------------------');
+              appEvents.emit(AppEvents.alertWarning, ['Login Failed', 'Wrong Credentials']);
+              this.setState({
+                isLoggingIn: false,
               });
+              return;
+              console.log('------------------------------------------------------------------------');
+            }
+          })
+          .catch((resultado: any) => {
+            console.log('Error con la api de cristobal: ', resultado);
           });
+        // const singUpInfo = {
+        //   name: formModel.user,
+        //   email: formModel.user + '@' + formModel.user,
+        //   login: formModel.user,
+        //   password: formModel.password,
+        // };
+        // getBackendSrv()
+        //   .post('/createUser', singUpInfo)
+        //   .then(() => {
+        //     if (isAdmin.isGrafanaAdmin) {
+        //       getBackendSrv()
+        //         .get(`/searchUsers`)
+        //         .then((result: any) => {
+        //           const found = result.find((element: any) => {
+        //             return element.name === formModel.user;
+        //           });
+        //           getBackendSrv().put('/users/' + found.id + '/permissionsChange', isAdmin);
+        //         });
+        //     }
+        //     getBackendSrv()
+        //       .post('/login', formModel)
+        //       .then((result: any) => {
+        //         const info = {
+        //           "theme": "",
+        //           "homeDashboardId": 1,
+        //           "timezone": "browser"
+        //         };
+        //         getBackendSrv()
+        //         .put('/api/user/preferences', info)
+        //         .then((resultado: any) => {
+        //           console.log("hecho!");
+        //           console.log(resultado);
+        //         })
+        //         .catch((resultado: any) => {
+        //           console.log("error: ",resultado);
+        //         });
+        //         this.result = result;
+        //         if (formModel.password !== 'admin' || config.ldapEnabled || config.authProxyEnabled) {
+        //           // this.toGrafana();
+        //           return;
+        //         } else {
+        //           // this.changeView();
+        //         }
+        //       })
+        //       .catch(() => {
+        //         this.setState({
+        //           isLoggingIn: false,
+        //         });
+        //       });
+        //   });
         this.setState({
           isLoggingIn: false,
         });

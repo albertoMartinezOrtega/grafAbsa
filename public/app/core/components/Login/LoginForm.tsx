@@ -266,7 +266,7 @@ export class LoginForm extends PureComponent<Props, State> {
         <div className="login-button-group">
           {!this.props.isLoggingIn ? (
             <Button
-              type="submit"
+              // type="submit"
               variant="contained"
               className={`btn btn-large p-x-2 ${this.state.valid ? 'btn-knesys-login' : 'btn-knesys-login-disabled'}`}
               onClick={this.onSubmit}
@@ -276,7 +276,7 @@ export class LoginForm extends PureComponent<Props, State> {
             </Button>
           ) : (
             <Button
-              type="submit"
+              // type="submit"
               variant="contained"
               size="large"
               color="primary"

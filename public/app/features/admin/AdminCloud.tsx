@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import { connect } from 'react-redux';
 import { hot } from 'react-hot-loader';
 
@@ -12,12 +12,35 @@ import Page from 'app/core/components/Page/Page';
 // custom textfield
 import FormControl from '@material-ui/core/FormControl';
 import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
 
 //switch
 import Switch from '@material-ui/core/Switch';
 import Grid from '@material-ui/core/Grid';
 
 import { withStyles } from '@material-ui/core/styles';
+const CssTextField = withStyles({
+  root: {
+    '& label.Mui-focused': {
+      color: 'black',
+    },
+    '& .MuiInput-underline:after': {
+      borderBottomColor: 'black',
+    },
+    '& .MuiOutlinedInput-root': {
+      '& fieldset': {
+        borderColor: 'red',
+      },
+      '&:hover fieldset': {
+        borderColor: 'yellow',
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: 'green',
+      },
+    },
+  },
+})(TextField);
+
 const PurpleSwitch = withStyles({
   switchBase: {
     color: '#00a0ff',
@@ -50,6 +73,8 @@ interface State {
   isCheckedAzure: boolean;
   isCheckedAdira: boolean;
   isCheckedPropietary: boolean;
+  shrinkConnectionUrl: boolean;
+  urlAdira: string;
 }
 
 export class AdminCloud extends React.PureComponent<Props, State> {
@@ -60,6 +85,8 @@ export class AdminCloud extends React.PureComponent<Props, State> {
     isCheckedAzure: false,
     isCheckedAdira: false,
     isCheckedPropietary: true,
+    shrinkConnectionUrl: false,
+    urlAdira: '',
   };
 
   async componentDidMount() {
@@ -94,6 +121,59 @@ export class AdminCloud extends React.PureComponent<Props, State> {
     });
   };
 
+  onChangeAdira = (e: ChangeEvent<HTMLInputElement>) => {
+    this.setState({
+      urlAdira: e.target.value,
+    });
+  };
+
+  shrinkLabel = (sender: string) => {
+    switch (sender) {
+      case 'connection-url':
+        this.setState({ shrinkConnectionUrl: true });
+        break;
+      default:
+    }
+  };
+
+  unShrinkLabel = (sender: string) => {
+    switch (sender) {
+      case 'connection-url':
+        if (this.state.urlAdira === '') {
+          this.setState({ shrinkConnectionUrl: false });
+        }
+        break;
+      default:
+    }
+  };
+
+  postJsonSubmit = () => {
+    console.log('enviado!!!!!!!!!!');
+    console.log(this.state.isCheckedAdira ? 'adira: true' : 'adira: false');
+    console.log(this.state.isCheckedPropietary ? 'prop: true' : 'prop: false');
+    console.log('url adira: ', this.state.urlAdira);
+
+    const cloudInfo = {
+      adira: {
+        service: this.state.isCheckedAdira,
+        connectionString: this.state.urlAdira,
+      },
+      knesys: {
+        service: this.state.isCheckedPropietary,
+      },
+    };
+
+    getBackendSrv()
+      .post('http://192.168.1.139:8080/api/setupnetwork', cloudInfo)
+      .then((response: any) => {
+        console.log('respuesta emitida!');
+        console.log(response);
+      })
+      .catch((response: any) => {
+        console.log('Unexpected Error: ' + response);
+      });
+  };
+
   render() {
     const { isLoading } = this.state;
     const { navModel } = this.props;
@@ -103,7 +183,7 @@ export class AdminCloud extends React.PureComponent<Props, State> {
           <div className="grafana-info-box span8" style={{ margin: '20px 0 25px 0' }}>
             Cloud Services Configuration
           </div>
-          <form name="networkForm" className="network-form-group gf-form-group">
+          <form name="networkForm" className="network-form-group gf-form-group" onSubmit={this.postJsonSubmit}>
             <FormControl className="network-form-buttons">
               <Grid component="label" container alignItems="center" spacing={1}>
                 <Grid item>
@@ -142,6 +222,19 @@ export class AdminCloud extends React.PureComponent<Props, State> {
                 <Grid item>Adira</Grid>
               </Grid>
             </FormControl>
+            <FormControl className="network-form-buttons-cloud">
+              <CssTextField
+                className="network-form-input-adira"
+                label="Connection String"
+                value={this.state.urlAdira}
+                disabled={!this.state.isCheckedAdira}
+                onChange={this.onChangeAdira}
+                InputLabelProps={{ shrink: this.state.shrinkConnectionUrl }}
+                onFocus={() => this.shrinkLabel('connection-url')}
+                onBlur={() => this.unShrinkLabel('connection-url')}
+                required
+              />
+            </FormControl>
             <FormControl className="network-form-buttons">
               <Grid component="label" container alignItems="center" spacing={1}>
                 <Grid item>
@@ -157,6 +250,9 @@ export class AdminCloud extends React.PureComponent<Props, State> {
             <div className="network-button-group">
               <Button type="submit" variant="contained" className={`btn btn-large p-x-2 `}>
                 Submit
+              </Button>
+              <Button variant="contained" className={`btn btn-large p-x-2 `} onClick={this.postJsonSubmit}>
+                Submit2.0
               </Button>
             </div>
           </form>
