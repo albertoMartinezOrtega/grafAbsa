@@ -14,6 +14,8 @@ const isOauthEnabled = () => {
   return !!config.oauth && Object.keys(config.oauth).length > 0;
 };
 
+const axios = require('axios');
+
 export interface FormModel {
   user: string;
   password: string;
@@ -75,7 +77,7 @@ export class LoginCtrl extends PureComponent<Props, State> {
     this.setState({
       isLoggingIn: true,
     });
-    const isAdmin = { isGrafanaAdmin: true };
+    let isAdmin = { isGrafanaAdmin: true };
     getBackendSrv()
       .get('https://jsonplaceholder.typicode.com/todos/1')
       .then((result: any) => {
@@ -106,13 +108,17 @@ export class LoginCtrl extends PureComponent<Props, State> {
       .catch(() => {
         console.log('login aun no registrado');
         const usuarioAChecar = {
-          password: '@123Qwer', //formModel.password,
-          account: 'jorgito@gmail.com', //formModel.user,
+          password: formModel.password,
+          account: formModel.user,
         };
-        getBackendSrv()
-          .post('https://api.knesys.com/ksum/API/Admin/Grafana/Login/', usuarioAChecar)
+        console.log('usuario a checar: ', usuarioAChecar);
+        axios
+          .post('https://api.knesys.com/ksum/API/admin/grafana/login', usuarioAChecar)
           .then((respuesta: any) => {
-            if (respuesta.Status !== 'Error') {
+            console.log('entro a parte then');
+            console.log(respuesta);
+            isAdmin = respuesta.data.Data === 'read,admin' ? { isGrafanaAdmin: true } : { isGrafanaAdmin: false };
+            if (respuesta.data.Status === 'Ok') {
               console.log('-------------------------si existe el usuario---------------------------');
               const singUpInfo = {
                 name: formModel.user,
@@ -153,10 +159,10 @@ export class LoginCtrl extends PureComponent<Props, State> {
 
                       this.result = result;
                       if (formModel.password !== 'admin' || config.ldapEnabled || config.authProxyEnabled) {
-                        // this.toGrafana();
+                        this.toGrafana();
                         return;
                       } else {
-                        // this.changeView();
+                        this.changeView();
                       }
                     })
                     .catch(() => {

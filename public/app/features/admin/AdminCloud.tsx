@@ -58,6 +58,7 @@ const PurpleSwitch = withStyles({
   track: {},
 })(Switch);
 
+const axios = require('axios');
 const backendSrv = getBackendSrv();
 
 type Settings = { [key: string]: { [key: string]: string } };
@@ -89,12 +90,135 @@ export class AdminCloud extends React.PureComponent<Props, State> {
     urlAdira: '',
   };
 
+  loadCloudConfig = () => {
+    // const userInfo = {
+    //   "email": "knesys@knesys.com",
+    //   "password": "knesys123",
+    //   "name": "knesys",
+    //   "role": "user",
+    //   "phrase": "fdbcb5be4656ced7bdb58bc960fd1c56b55c7c16"
+    // };
+    // getBackendSrv()
+    // .post('http://192.168.100.200:3001/apigw/v1/auth/register', userInfo)
+    // .then((result: any) => {
+    //   console.log("satisfactorio");
+    //   console.log(result);
+    console.log(window.location.href);
+    const ipRegex = /http:\/\/(.+)\//;
+    const ipAdd = ipRegex.exec(window.location.href);
+    console.log(ipAdd);
+    const userInfo2 = {
+      email: 'knesys@knesys.com',
+      password: 'knesys123',
+      name: 'knesys',
+    };
+    getBackendSrv()
+      .post(
+        'http://' + ipAdd[1] + 'apigw/v1/auth/login' /*'http://192.168.100.200:3001/apigw/v1/auth/login'*/,
+        userInfo2
+      )
+      .then((result2: any) => {
+        // const token = result2.token.accessToken;
+        // console.log("satisfactorio get token");
+        // console.log(result2);
+        // console.log("tokem = ",result2.token.accessToken);
+        const config = {
+          headers: { Authorization: `Bearer ${result2.token.accessToken}` },
+        };
+        console.log(config);
+        axios
+          .get('http://' + ipAdd[1] + '/apigw/v1/cloud/gateway' /*'http://apigw:3001/apigw/v1/cloud/gateway'*/, config)
+          .then((result3: any) => {
+            // console.log("success result3");
+            // console.log(result3);
+            this.setState(
+              {
+                isCheckedAdira: result3.data.adira.service,
+                urlAdira: result3.data.adira.connectionString,
+                isCheckedPropietary: result3.data.knesys.service,
+              },
+              () => {
+                if (this.state.isCheckedAdira) {
+                  this.setState({
+                    shrinkConnectionUrl: true,
+                  });
+                }
+              }
+            );
+          })
+          .catch((result3: any) => {
+            console.log('error result3: ', result3);
+          });
+      })
+      .catch((result2: any) => {
+        console.log('error retrieving the token: ', result2);
+      });
+    // })
+    // .catch((result: any) => {
+    //   console.log("--------------error--------------");
+    //   console.log(result);
+    // });
+  };
+
+  patchJsonSubmit = () => {
+    const userInfo2 = {
+      email: 'knesys@knesys.com',
+      password: 'knesys123',
+      name: 'knesys',
+    };
+
+    const bodyPatch = {
+      adira: {
+        service: this.state.isCheckedAdira,
+        connectionString: this.state.urlAdira,
+      },
+      knesys: {
+        service: this.state.isCheckedPropietary,
+      },
+    };
+    console.log(window.location.href);
+    const ipRegex = /http:\/\/(.+)\//;
+    const ipAdd = ipRegex.exec(window.location.href);
+    console.log(ipAdd);
+    getBackendSrv()
+      .post(
+        'http://' + ipAdd[1] + 'apigw/v1/auth/login' /*'http://192.168.100.200:3001/apigw/v1/auth/login'*/,
+        userInfo2
+      )
+      .then((result2: any) => {
+        // console.log("satisfactorio get token");
+        // console.log(result2);
+        // console.log("tokem = ",result2.token.accessToken);
+        const config = {
+          headers: { Authorization: `Bearer ${result2.token.accessToken}` },
+        };
+        // console.log(config);
+        axios
+          .patch(
+            'http://' + ipAdd[1] + '/apigw/v1/cloud/gateway' /*'http://192.168.100.200:3001/apigw/v1/cloud/gateway'*/,
+            bodyPatch,
+            config
+          )
+          .then((result3: any) => {
+            // console.log("success result3");
+            // console.log(result3);
+          })
+          .catch((result3: any) => {
+            console.log('error result3: ', result3);
+          });
+      })
+      .catch((result2: any) => {
+        console.log('error retrieving the token: ', result2);
+      });
+  };
+
   async componentDidMount() {
     const settings: Settings = await backendSrv.get('/api/admin/cloud-settings');
     this.setState({
       settings,
       isLoading: false,
     });
+    this.loadCloudConfig();
   }
 
   handleChangeAmazon = () => {
@@ -147,33 +271,6 @@ export class AdminCloud extends React.PureComponent<Props, State> {
     }
   };
 
-  postJsonSubmit = () => {
-    console.log('enviado!!!!!!!!!!');
-    console.log(this.state.isCheckedAdira ? 'adira: true' : 'adira: false');
-    console.log(this.state.isCheckedPropietary ? 'prop: true' : 'prop: false');
-    console.log('url adira: ', this.state.urlAdira);
-
-    const cloudInfo = {
-      adira: {
-        service: this.state.isCheckedAdira,
-        connectionString: this.state.urlAdira,
-      },
-      knesys: {
-        service: this.state.isCheckedPropietary,
-      },
-    };
-
-    getBackendSrv()
-      .post('http://192.168.1.139:8080/api/setupnetwork', cloudInfo)
-      .then((response: any) => {
-        console.log('respuesta emitida!');
-        console.log(response);
-      })
-      .catch((response: any) => {
-        console.log('Unexpected Error: ' + response);
-      });
-  };
-
   render() {
     const { isLoading } = this.state;
     const { navModel } = this.props;
@@ -183,7 +280,7 @@ export class AdminCloud extends React.PureComponent<Props, State> {
           <div className="grafana-info-box span8" style={{ margin: '20px 0 25px 0' }}>
             Cloud Services Configuration
           </div>
-          <form name="networkForm" className="network-form-group gf-form-group" onSubmit={this.postJsonSubmit}>
+          <form name="networkForm" className="network-form-group gf-form-group" onSubmit={this.patchJsonSubmit}>
             <FormControl className="network-form-buttons">
               <Grid component="label" container alignItems="center" spacing={1}>
                 <Grid item>
@@ -251,7 +348,7 @@ export class AdminCloud extends React.PureComponent<Props, State> {
               <Button type="submit" variant="contained" className={`btn btn-large p-x-2 `}>
                 Submit
               </Button>
-              <Button variant="contained" className={`btn btn-large p-x-2 `} onClick={this.postJsonSubmit}>
+              <Button variant="contained" className={`btn btn-large p-x-2 `} onClick={this.patchJsonSubmit}>
                 Submit2.0
               </Button>
             </div>

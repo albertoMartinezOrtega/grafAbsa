@@ -142,7 +142,7 @@ export class AdminNetwork extends React.Component<Props, State> {
       },
       () => {
         getBackendSrv()
-          .get('http://192.168.1.139:8080/api/connectwifi')
+          .get('http://192.168.100.200:8030/api/connectwifi')
           .then((result: any) => {
             this.options = [];
             for (let i = 0; i < result.length; i++) {
@@ -176,34 +176,55 @@ export class AdminNetwork extends React.Component<Props, State> {
   };
 
   loadNetworkConfig = () => {
+    //   {
+    //     "gtwid": "dc:a6:32:4f:d5:e8",
+    //     "gtwname": "knesys-gateway",
+    //     "ethernet": false,
+    //     "ipStatic": false,
+    //     "ethernetConf": {
+    //         "ip": "",
+    //         "mask": "",
+    //         "gateway": "",
+    //         "dns": "192.168.100.1"
+    //     },
+    //     "wifi": true,
+    //     "wifiConf": {
+    //         "wifiName": "",
+    //         "wifiPass": "",
+    //         "ipStatic": false,
+    //         "ipStaticConf": {
+    //             "ip": "192.168.100.200",
+    //             "mask": "255.255.255.0",
+    //             "gateway": "192.168.100.1",
+    //             "dns": "192.168.100.1"
+    //         }
+    //     }
+    // }
     getBackendSrv()
-      .get('http://192.168.1.139:8080/api/setupnetwork')
+      .get('http://192.168.100.200:8030/api/setupnetwork')
       .then((result: any) => {
-        this.setState({
-          ipAddress: result.ethernetConf.ip,
-          subMask: result.ethernetConf.mask,
-          dfGateway: result.ethernetConf.gateway,
-          dns: result.ethernetConf.dns,
-        });
-        // if(result.ethernet){
-        //   this.setState({
-        //     ipAddress: result.ethernetConf.ip,
-        //     subMask: result.ethernetConf.mask,
-        //     dfGateway: result.ethernetConf.gateway,
-        //     dns: result.ethernetConf.dns,
-        //     isCheckedDHCP: result.ipStatic,
-        //   });
-        // }
-        // else {
-        //   this.setState({
-        //     ipAddress: result.wifiConf.ipStaticConf.ip,
-        //     subMask: result.wifiConf.ipStaticConf.mask,
-        //     dfGateway: result.wifiConf.ipStaticConf.gateway,
-        //     dns: result.wifiConf.ipStaticConf.dns,
-        //     isCheckedDHCP: result.wifiConf.ipStatic,
-        //     isCheckedWifi: result.wifi,
-        //   });
-        // }
+        console.log(result);
+        if (result.ethernet) {
+          this.setState({
+            isCheckedDHCP: result.ipStatic,
+            isCheckedWifi: false,
+            ipAddress: result.ethernetConf.ip,
+            subMask: result.ethernetConf.mask,
+            dfGateway: result.ethernetConf.gateway,
+            dns: result.ethernetConf.dns,
+          });
+        } else {
+          this.setState({
+            isCheckedDHCP: result.wifiConf.ipStatic,
+            isCheckedWifi: true,
+            wifiName: result.wifiConf.wifiName,
+            wifiPswd: result.wifiConf.wifiPass,
+            ipAddress: result.wifiConf.ipStaticConf.ip,
+            subMask: result.wifiConf.ipStaticConf.mask,
+            dfGateway: result.wifiConf.ipStaticConf.gateway,
+            dns: result.wifiConf.ipStaticConf.dns,
+          });
+        }
       })
       .catch(() => {
         console.log('Unexpected Error: No route found');
@@ -211,15 +232,15 @@ export class AdminNetwork extends React.Component<Props, State> {
   };
 
   postJsonSubmit = () => {
-    console.log('enviado!!!!!!!!!!');
-    console.log(this.state.isCheckedDHCP ? 'dhcp: true' : 'dhcp: false');
-    console.log(this.state.isCheckedWifi ? 'wifi: true' : 'wifi: false');
-    console.log('wifiname: ' + this.state.wifiName);
-    console.log('wifipsw: ' + this.state.wifiPswd);
-    console.log('ip: ' + this.state.ipAddress);
-    console.log('submask: ' + this.state.subMask);
-    console.log('gateway: ' + this.state.dfGateway);
-    console.log('dns: ' + this.state.dns);
+    // console.log('enviado!!!!!!!!!!');
+    // console.log(this.state.isCheckedDHCP ? 'dhcp: true' : 'dhcp: false');
+    // console.log(this.state.isCheckedWifi ? 'wifi: true' : 'wifi: false');
+    // console.log('wifiname: ' + this.state.wifiName);
+    // console.log('wifipsw: ' + this.state.wifiPswd);
+    // console.log('ip: ' + this.state.ipAddress);
+    // console.log('submask: ' + this.state.subMask);
+    // console.log('gateway: ' + this.state.dfGateway);
+    // console.log('dns: ' + this.state.dns);
 
     const networkinfo = {
       Wifi: this.state.isCheckedWifi,
@@ -233,7 +254,7 @@ export class AdminNetwork extends React.Component<Props, State> {
     };
 
     getBackendSrv()
-      .post('http://192.168.1.139:8080/api/setupnetwork', networkinfo)
+      .post('http://192.168.100.200:8030/api/setupnetwork', networkinfo)
       .then((response: any) => {
         console.log('respuesta emitida!');
         console.log(response);
