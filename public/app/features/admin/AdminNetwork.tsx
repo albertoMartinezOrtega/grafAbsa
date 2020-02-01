@@ -141,8 +141,10 @@ export class AdminNetwork extends React.Component<Props, State> {
         selectedWifi: true,
       },
       () => {
+        const ipRegex = /http:\/\/(.+)\//;
+        const ipAdd = ipRegex.exec(window.location.href);
         getBackendSrv()
-          .get('http://192.168.100.200:8030/api/connectwifi')
+          .get('http://' + ipAdd[1] + ':8030/api/connectwifi')
           .then((result: any) => {
             this.options = [];
             for (let i = 0; i < result.length; i++) {
@@ -200,8 +202,10 @@ export class AdminNetwork extends React.Component<Props, State> {
     //         }
     //     }
     // }
+    const ipRegex = /http:\/\/(.+)\//;
+    const ipAdd = ipRegex.exec(window.location.href);
     getBackendSrv()
-      .get('http://192.168.100.200:8030/api/setupnetwork')
+      .get('http://' + ipAdd[1] + ':8030/api/setupnetwork')
       .then((result: any) => {
         console.log(result);
         if (result.ethernet) {
@@ -252,9 +256,10 @@ export class AdminNetwork extends React.Component<Props, State> {
       DefaultGW: this.state.dfGateway,
       DNS: this.state.dns,
     };
-
+    const ipRegex = /http:\/\/(.+)\//;
+    const ipAdd = ipRegex.exec(window.location.href);
     getBackendSrv()
-      .post('http://192.168.100.200:8030/api/setupnetwork', networkinfo)
+      .post('http://' + ipAdd[1] + ':8030/api/setupnetwork', networkinfo)
       .then((response: any) => {
         console.log('respuesta emitida!');
         console.log(response);
