@@ -114,7 +114,7 @@ export class AdminCloud extends React.PureComponent<Props, State> {
     };
     getBackendSrv()
       .post(
-        'http://' + ipAdd[1] + 'apigw/v1/auth/login' /*'http://192.168.100.200:3001/apigw/v1/auth/login'*/,
+        'http://' + ipAdd[1] + '/apigw/v1/auth/login' /*'http://192.168.100.200:3001/apigw/v1/auth/login'*/,
         userInfo2
       )
       .then((result2: any) => {
@@ -182,7 +182,7 @@ export class AdminCloud extends React.PureComponent<Props, State> {
     console.log(ipAdd);
     getBackendSrv()
       .post(
-        'http://' + ipAdd[1] + 'apigw/v1/auth/login' /*'http://192.168.100.200:3001/apigw/v1/auth/login'*/,
+        'http://' + ipAdd[1] + '/apigw/v1/auth/login' /*'http://192.168.100.200:3001/apigw/v1/auth/login'*/,
         userInfo2
       )
       .then((result2: any) => {

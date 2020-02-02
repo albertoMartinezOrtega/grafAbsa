@@ -41,7 +41,7 @@ run-with-local-source-copy:
 	docker exec -ti grafana-build bash
 
 update-source:
-	docker cp "${GOPATH}/src/github.com/grafana/grafana" grafana-build:/go/src/github.com/grafana/	
+	docker cp /home/gommax/go/src/github.com/albertoMartinezOrtega/grafAbsa hardcore_mendeleev:/go/src/github.com/grafana/
 
 attach:
 	docker exec -ti grafana-build bash
