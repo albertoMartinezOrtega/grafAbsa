@@ -105,7 +105,7 @@ export class AdminCloud extends React.PureComponent<Props, State> {
     //   console.log(result);
     const ipRegex = /http:\/\/(.+)\/admin/;
     const ipAdd = ipRegex.exec(window.location.href);
-    console.log(ipAdd);
+    // console.log(ipAdd);
     const userInfo2 = {
       email: 'knesys@knesys.com',
       password: 'knesys123',
@@ -124,7 +124,7 @@ export class AdminCloud extends React.PureComponent<Props, State> {
         const config = {
           headers: { Authorization: `Bearer ${result2.token.accessToken}` },
         };
-        console.log(config);
+        // console.log(config);
         axios
           .get('http://' + ipAdd[1] + '/apigw/v1/cloud/gateway' /*'http://apigw:3001/apigw/v1/cloud/gateway'*/, config)
           .then((result3: any) => {
@@ -276,9 +276,6 @@ export class AdminCloud extends React.PureComponent<Props, State> {
     return (
       <Page navModel={navModel}>
         <Page.Contents isLoading={isLoading}>
-          <div className="grafana-info-box span8" style={{ margin: '20px 0 25px 0' }}>
-            Cloud Services Configuration
-          </div>
           <form name="networkForm" className="network-form-group gf-form-group" onSubmit={this.patchJsonSubmit}>
             <FormControl className="network-form-buttons">
               <Grid component="label" container alignItems="center" spacing={1}>
