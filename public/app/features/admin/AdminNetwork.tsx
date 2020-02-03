@@ -141,7 +141,7 @@ export class AdminNetwork extends React.Component<Props, State> {
         selectedWifi: true,
       },
       () => {
-        const ipRegex = /http:\/\/(.+)\//;
+        const ipRegex = /http:\/\/(.+)\/admin/;
         const ipAdd = ipRegex.exec(window.location.href);
         getBackendSrv()
           .get('http://' + ipAdd[1] + '/nodesetup/api/connectwifi')
@@ -202,7 +202,7 @@ export class AdminNetwork extends React.Component<Props, State> {
     //         }
     //     }
     // }
-    const ipRegex = /http:\/\/(.+)\//;
+    const ipRegex = /http:\/\/(.+)\/admin/;
     const ipAdd = ipRegex.exec(window.location.href);
     getBackendSrv()
       .get('http://' + ipAdd[1] + '/nodesetup/api/setupnetwork')
@@ -256,7 +256,7 @@ export class AdminNetwork extends React.Component<Props, State> {
       DefaultGW: this.state.dfGateway,
       DNS: this.state.dns,
     };
-    const ipRegex = /http:\/\/(.+)\//;
+    const ipRegex = /http:\/\/(.+)\/admin/;
     const ipAdd = ipRegex.exec(window.location.href);
     getBackendSrv()
       .post('http://' + ipAdd[1] + '/nodesetup/api/setupnetwork', networkinfo)

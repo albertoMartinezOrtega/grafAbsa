@@ -103,8 +103,7 @@ export class AdminCloud extends React.PureComponent<Props, State> {
     // .then((result: any) => {
     //   console.log("satisfactorio");
     //   console.log(result);
-    console.log(window.location.href);
-    const ipRegex = /http:\/\/(.+)\//;
+    const ipRegex = /http:\/\/(.+)\/admin/;
     const ipAdd = ipRegex.exec(window.location.href);
     console.log(ipAdd);
     const userInfo2 = {
@@ -177,7 +176,7 @@ export class AdminCloud extends React.PureComponent<Props, State> {
       },
     };
     console.log(window.location.href);
-    const ipRegex = /http:\/\/(.+)\//;
+    const ipRegex = /http:\/\/(.+)\/admin/;
     const ipAdd = ipRegex.exec(window.location.href);
     console.log(ipAdd);
     getBackendSrv()
