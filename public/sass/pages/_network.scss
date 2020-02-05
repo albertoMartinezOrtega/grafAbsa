@@ -37,6 +37,7 @@
 
 .wifi-search-box {
   min-width: 160px;
+  width: 300px;
 }
 
 .network-form-input-adira {
@@ -78,6 +79,10 @@
   float: right;
   /* height:200px; */
   /* border:1px solid blue; */
+}
+
+.network-successmessage-group {
+  margin: 5px;
 }
 
 .network-form-buttons {

@@ -30,7 +30,7 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
 //menu list
 import MenuItem from '@material-ui/core/MenuItem';
-import InputLabel from '@material-ui/core/InputLabel';
+import FormHelperText from '@material-ui/core/FormHelperText';
 import Select from '@material-ui/core/Select';
 
 import { withStyles } from '@material-ui/core/styles';
@@ -107,6 +107,10 @@ interface State {
   dfGateway: string;
   dns: string;
   validSearch: boolean;
+  hiddenSuccess: boolean;
+  hiddenEthernet: boolean;
+  hiddenWifi: boolean;
+  textSearching: boolean;
 }
 
 export class AdminNetwork extends React.Component<Props, State> {
@@ -132,29 +136,34 @@ export class AdminNetwork extends React.Component<Props, State> {
     dfGateway: '',
     dns: '',
     validSearch: true,
+    hiddenSuccess: true,
+    hiddenEthernet: true,
+    hiddenWifi: true,
+    textSearching: false,
   };
 
   options: any[] = ['Wifi Networks'];
   searchingNetworks = () => {
-    this.setState(
-      {
-        validSearch: !this.state.validSearch,
-        selectedWifi: true,
-      },
-      () => {
-        const ipRegex = /http:\/\/(.+)\/admin/;
-        const ipAdd = ipRegex.exec(window.location.href);
-        getBackendSrv()
-          .get('http://' + ipAdd[1] + '/nodesetup/api/connectwifi')
-          .then((result: any) => {
-            this.options = [];
-            for (let i = 0; i < result.length; i++) {
-              this.options.push(result[i].ssid);
-            }
-            this.setState(
-              {
-                validSearch: !this.state.validSearch,
-                wifi: '0',
+    const ipRegex = /http:\/\/(.+)\/admin/;
+    const ipAdd = ipRegex.exec(window.location.href);
+    if (ipAdd) {
+      getBackendSrv()
+        .get('http://' + ipAdd[1] + '/nodesetup/api/connectwifi')
+        .then((result: any) => {
+          this.options = [];
+          for (let i = 0; i < result.length; i++) {
+            this.options.push(result[i].ssid);
+          }
+          this.setState(
+            {
+              validSearch: true,
+              wifi: '0',
+              selectedWifi: true,
+            },
+            () => {
+              this.setState({
+                wifiName: this.options[parseInt(this.state.wifi, 10)],
+                textSearching: false,
                 valid: this.validate(
                   this.state.selectedWifi,
                   this.state.wifiPswd,
@@ -163,61 +172,61 @@ export class AdminNetwork extends React.Component<Props, State> {
                   this.state.dfGateway,
                   this.state.dns
                 ),
-              },
-              () => {
-                this.setState({
-                  wifiName: this.options[parseInt(this.state.wifi, 10)],
-                });
-              }
-            );
-          })
-          .catch(() => {
-            console.log('Unexpected Error: No route found');
-          });
-      }
-    );
+              });
+            }
+          );
+        })
+        .catch(() => {
+          console.log('Unexpected Error: No route found');
+        });
+    }
+    this.forceUpdate();
   };
 
+  IPADDRESS = '192.168.100.201';
   loadNetworkConfig = () => {
     const ipRegex = /http:\/\/(.+)\/admin/;
     const ipAdd = ipRegex.exec(window.location.href);
-    getBackendSrv()
-      .get('http://' + ipAdd[1] + '/nodesetup/api/setupnetwork')
-      .then((result: any) => {
-        // console.log(result);
-        // console.log(result.wifiConf.wifiName);
-        if (result.ethernet) {
-          this.setState({
-            isCheckedDHCP: !result.ipStatic,
-            isCheckedWifi: false,
-            ipAddress: result.ethernetConf.ip,
-            subMask: result.ethernetConf.mask,
-            dfGateway: result.ethernetConf.gateway,
-            dns: result.ethernetConf.dns,
-          });
-        } else {
-          this.setState(
-            {
-              isCheckedDHCP: !result.wifiConf.ipStatic,
-              isCheckedWifi: true,
-              wifiName: result.wifiConf.wifiName,
-              ipAddress: result.wifiConf.ipStaticConf.ip,
-              subMask: result.wifiConf.ipStaticConf.mask,
-              dfGateway: result.wifiConf.ipStaticConf.gateway,
-              dns: result.wifiConf.ipStaticConf.dns,
-            },
-            () => {
-              // console.log("wifiname: ",this.state.wifiName);
-              this.options = [];
-              this.options.push(this.state.wifiName);
-              this.forceUpdate();
-            }
-          );
-        }
-      })
-      .catch(() => {
-        console.log('Unexpected Error: No route found');
-      });
+    if (ipAdd) {
+      getBackendSrv()
+        .get('http://' + ipAdd[1] + '/nodesetup/api/setupnetwork')
+        .then((result: any) => {
+          console.log(result);
+          // console.log(result.wifiConf.wifiName);
+          if (result.ethernet) {
+            this.setState({
+              isCheckedDHCP: !result.ipStatic,
+              isCheckedWifi: false,
+              ipAddress: result.ethernetConf.ip,
+              subMask: result.ethernetConf.mask,
+              dfGateway: result.ethernetConf.gateway,
+              dns: result.ethernetConf.dns,
+            });
+          } else {
+            this.searchingNetworks();
+            this.setState(
+              {
+                isCheckedDHCP: !result.wifiConf.ipStatic,
+                isCheckedWifi: true,
+                wifiName: result.wifiConf.wifiName,
+                ipAddress: result.wifiConf.ipStaticConf.ip,
+                subMask: result.wifiConf.ipStaticConf.mask,
+                dfGateway: result.wifiConf.ipStaticConf.gateway,
+                dns: result.wifiConf.ipStaticConf.dns,
+              },
+              () => {
+                // console.log("wifiname: ",this.state.wifiName);
+                this.options = [];
+                this.options.push(this.state.wifiName);
+                this.forceUpdate();
+              }
+            );
+          }
+        })
+        .catch(() => {
+          console.log('Unexpected Error: No route found');
+        });
+    }
   };
 
   postJsonSubmit = () => {
@@ -254,15 +263,30 @@ export class AdminNetwork extends React.Component<Props, State> {
     };
     const ipRegex = /http:\/\/(.+)\/admin/;
     const ipAdd = ipRegex.exec(window.location.href);
-    getBackendSrv()
-      .post('http://' + ipAdd[1] + '/nodesetup/api/setupnetwork', networkinfo)
-      .then((response: any) => {
-        // console.log('respuesta emitida!');
-        // console.log(response);
-      })
-      .catch((response: any) => {
-        console.log('Unexpected Error: ' + response);
-      });
+    if (ipAdd) {
+      if (this.state.isCheckedWifi) {
+        this.setState({
+          hiddenSuccess: false,
+          hiddenWifi: false,
+          hiddenEthernet: true,
+        });
+      } else {
+        this.setState({
+          hiddenSuccess: false,
+          hiddenEthernet: false,
+          hiddenWifi: true,
+        });
+      }
+      getBackendSrv()
+        .post('http://' + ipAdd[1] + '/nodesetup/api/setupnetwork', networkinfo)
+        .then((response: any) => {
+          console.log('respuesta emitida!');
+          console.log(response);
+        })
+        .catch((response: any) => {
+          console.log('Unexpected Error: ' + response);
+        });
+    }
   };
 
   async componentDidMount() {
@@ -300,6 +324,15 @@ export class AdminNetwork extends React.Component<Props, State> {
         isCheckedWifi: !this.state.isCheckedWifi,
       },
       () => {
+        if (this.state.isCheckedWifi) {
+          this.searchingNetworks();
+          this.setState({
+            textSearching: true,
+            isCheckedDHCP: true,
+          });
+        } else {
+          this.setState({ validSearch: false });
+        }
         this.setState({
           valid: this.validate(
             this.state.selectedWifi,
@@ -546,39 +579,25 @@ export class AdminNetwork extends React.Component<Props, State> {
                 label="DHCP"
               />
             </FormControl>
-            {/**/}
+            <div className="network-successmessage-group" hidden={!this.state.textSearching}>
+              <b>Searching for wifi networks...</b>
+            </div>
             <FormControl className="network-form-wifi">
-              {/* ------------------------------------------------------------------------------------- */}
-              <div className="network-wifi-main">
-                <div className="d1">
-                  <Button
-                    variant="contained"
-                    disabled={!this.state.isCheckedWifi && this.state.validSearch}
-                    onClick={this.searchingNetworks}
-                  >
-                    Search
-                  </Button>
-                </div>
-                <div className="d2">
-                  <InputLabel id="demo-simple-select-label" className="label-wifi">
-                    Wifi Networks
-                  </InputLabel>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    className="wifi-search-box"
-                    id="demo-simple-select"
-                    disabled={!this.state.isCheckedWifi}
-                    value={parseInt(this.state.wifi, 10)}
-                    onChange={this.onChangeWifi}
-                  >
-                    {this.options.map((network, index) => (
-                      <MenuItem key={index} value={index}>
-                        {network}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </div>
-              </div>
+              <FormHelperText>Wifi Networks</FormHelperText>
+              <Select
+                labelId="demo-simple-select-label"
+                className="wifi-search-box"
+                id="demo-simple-select"
+                disabled={!this.state.isCheckedWifi}
+                value={parseInt(this.state.wifi, 10)}
+                onChange={this.onChangeWifi}
+              >
+                {this.options.map((network, index) => (
+                  <MenuItem key={index} value={index}>
+                    {network}
+                  </MenuItem>
+                ))}
+              </Select>
               {/* ------------------------------------------------------------------------------------- */}
             </FormControl>
             <FormControl className="network-form">
@@ -688,8 +707,24 @@ export class AdminNetwork extends React.Component<Props, State> {
                 }
               />
             </FormControl>
+            <div className="network-successmessage-group" hidden={this.state.hiddenSuccess}>
+              <p>Successfull Configuration!</p>
+              <p>
+                To visualize the configured data click on{' '}
+                <a href="http://app.knesys.com/admin/Account/Login#">this link</a>
+              </p>
+              <p hidden={this.state.hiddenEthernet}>
+                Make sure to connect the Gateway network cable to the local network
+              </p>
+              <p hidden={this.state.hiddenWifi}>Disconnect the network cable that is connected to the Gateway</p>
+            </div>
             <div className="network-button-group">
-              <Button type="submit" variant="contained" className={`btn btn-large p-x-2 `} disabled={!this.state.valid}>
+              <Button
+                variant="contained"
+                className={`btn btn-large p-x-2 `}
+                disabled={!this.state.valid}
+                onClick={this.postJsonSubmit}
+              >
                 Submit
               </Button>
             </div>
