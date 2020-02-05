@@ -188,7 +188,7 @@ export class AdminNetwork extends React.Component<Props, State> {
         // console.log(result.wifiConf.wifiName);
         if (result.ethernet) {
           this.setState({
-            isCheckedDHCP: result.ipStatic,
+            isCheckedDHCP: !result.ipStatic,
             isCheckedWifi: false,
             ipAddress: result.ethernetConf.ip,
             subMask: result.ethernetConf.mask,
@@ -198,7 +198,7 @@ export class AdminNetwork extends React.Component<Props, State> {
         } else {
           this.setState(
             {
-              isCheckedDHCP: result.wifiConf.ipStatic,
+              isCheckedDHCP: !result.wifiConf.ipStatic,
               isCheckedWifi: true,
               wifiName: result.wifiConf.wifiName,
               ipAddress: result.wifiConf.ipStaticConf.ip,

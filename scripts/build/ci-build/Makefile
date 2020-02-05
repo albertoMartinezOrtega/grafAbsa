@@ -41,7 +41,7 @@ run-with-local-source-copy:
 	docker exec -ti grafana-build bash
 
 update-source:
-	docker cp /home/gommax/go/src/github.com/albertoMartinezOrtega/grafAbsa unruffled_bartik:/go/src/github.com/grafana/
+	docker cp /home/gommax/go/src/github.com/albertoMartinezOrtega/grafAbsa zen_bhabha:/go/src/github.com/grafana/
 
 attach:
 	docker exec -ti grafana-build bash
